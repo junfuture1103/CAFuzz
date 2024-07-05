@@ -98,8 +98,10 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
                     f'--port={quickPort[qIdx]} '
                     f'--pktid={pktId} --endian={quickEndian[qIdx]} '
                     f'--cmdcode={quickCode[qIdx]} --file={quickParam[qIdx]}')
-                print("launch_string in checkParams : ",launch_string)
                 
+                print("\n\nlaunch_string in checkParams : ",launch_string)
+                print("quickParam :", quickParam)
+
                 cmd_args = shlex.split(launch_string)
                 subprocess.Popen(cmd_args)
             # if doesn't require parameters
