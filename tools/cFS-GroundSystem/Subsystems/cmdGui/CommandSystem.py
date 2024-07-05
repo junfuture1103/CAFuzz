@@ -103,6 +103,15 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
                 self.mcu = MiniCmdUtil(address, quickPort[qIdx],
                                        quickEndian[qIdx], pktId,
                                        quickCode[qIdx])
+                print("MiniCmdUtil args : ")
+                print(address, quickPort[qIdx],
+                                       quickEndian[qIdx], pktId,
+                                       quickCode[qIdx])
+                
+                print(type(address), type(quickPort[qIdx]),
+                        type(quickEndian[qIdx]), type(pktId),
+                        type(quickCode[qIdx]))
+
                 sendSuccess = self.mcu.sendPacket()
                 print("Command sent successfully:", sendSuccess)
             #     launch_string = (
