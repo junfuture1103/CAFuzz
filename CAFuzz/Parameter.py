@@ -84,6 +84,7 @@ class Parameter(QDialog, Ui_Dialog):
                                cmdCode, param_string.strip())
         
         sendSuccess = self.mcu.sendPacket()
+        
         if sendSuccess:
             self.status_box.setText('Command sent!')
         else:
