@@ -86,6 +86,8 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
             pktId = self.tblCmdSys.item(idx, 1).text()
             address = self.tblCmdSys.item(idx, 2).text()
 
+            print("qIdx in ProcessQuickButton : ", qIdx)
+
             # if requires parameters
             if self.checkParams(qIdx):
                 launch_string = (
@@ -96,6 +98,8 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
                     f'--port={quickPort[qIdx]} '
                     f'--pktid={pktId} --endian={quickEndian[qIdx]} '
                     f'--cmdcode={quickCode[qIdx]} --file={quickParam[qIdx]}')
+                print("launch_string in checkParams : ",launch_string)
+                
                 cmd_args = shlex.split(launch_string)
                 subprocess.Popen(cmd_args)
             # if doesn't require parameters
