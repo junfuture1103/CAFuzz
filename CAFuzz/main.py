@@ -5,7 +5,34 @@ import pickle
 import re
 import sys
 from pathlib import Path
+import random
+import struct
 
+# mutation!!
+cmd_ind = 5
+
+    
+def generate_random_bytes(dataType, length=None):
+    if dataType == '--word':
+        # 32-bit signed word, Little Endian
+        return struct.unpack('<i', struct.pack('<I', random.getrandbits(32)))[0]
+    elif dataType == '--half':
+        # 16-bit signed half-word, Little Endian
+        return struct.unpack('<h', struct.pack('<H', random.getrandbits(16)))[0]
+    elif dataType == '--byte':
+        # 8-bit signed byte, Little Endian
+        return struct.unpack('<b', struct.pack('<B', random.getrandbits(8)))[0]
+    elif dataType == '--double':
+        # 64-bit double, Little Endian
+        return random.uniform(-1.7e+308, 1.7e+308)
+    elif dataType == '--string':
+        if length is not None:
+            return ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=length))
+        else:
+            raise ValueError("Length required for string type")
+    else:
+        raise ValueError(f"Unknown data type: {dataType}")
+    
 class OffsetInit():
     HDR_VER_1_OFFSET = 0
     HDR_VER_2_OFFSET = 4
@@ -55,57 +82,68 @@ class OffsetInit():
 
 ROOTDIR = Path(sys.argv[0]).resolve().parent
 
-def start_send(host="127.0.0.1",
-               port="1234",
-               endian="LE",
-               pktID="0x1880",
-               cmdCode='struct_c_f_e___e_s___start_app_cmd__t.html',
-               params = None):
-    
-    offsetinit = OffsetInit()
-
-    # param_file from
-    param_file = 'struct_c_f_e___e_s___start_app_cmd__t.html'
-    param_file = 'TO_OUTPUT_ENABLE_CC'
-
-    cmdCode=cmdCode[0]
-    parameters=None
-
-    args = False
-
-    if(args == True):
-        mcu = MiniCmdUtil(host, port, endian, pktID, cmdCode)
-    else : 
-        # 
-        pageDefFile = "CFE_ES_CMD"
-
-        pickle_file = f'{ROOTDIR}/CommandFiles/{pageDefFile}'
-        with open(pickle_file, 'rb') as pickle_obj:
-            cmdDesc, cmdCodes, param_files = pickle.load(pickle_obj)
-
-        headers = ["cmdDesc", "cmdCodes", "param_files"]
-        rows = zip(cmdDesc, cmdCodes, param_files)
-        print(tabulate(rows, headers, tablefmt="grid"))
-
-        pickle_file = f'{ROOTDIR}/ParameterFiles/' + re.split(r'\.', param_file)[0]
-
-        # print("pickle_file : ", pickle_file)
+def checkParams(pickle_file):
+    try:
         with open(pickle_file, 'rb') as pickle_obj:
             _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
                 pickle_obj) # paramDescription is only for GUI
-            
-        input_list = []
-        for j in range(0,1,1):
-            # item = tbl.item(j, 2)
-            input_list.append("12")
+        return len(paramNames) > 0  # if has parameters
+    except IOError:
+        return False
 
-        print("===================== [Parameter] =====================")
-        print("ParameterFile Name : ", re.split(r'\.', param_file))
-        print("paramNames, dataTypesNew, stringLen : ", paramNames, dataTypesNew, stringLen)
-        print("generated input values : ", input_list)
+
+def start_send(host="127.0.0.1",
+               port="1234",
+               endian="LE",
+               pktID="0x1880"):
+    
+    offsetinit = OffsetInit()
+
+    print("\n===================== [Parameter Def] =====================")
+    pageDefFile = "CFE_ES_CMD"
+
+    print("Parameter DefFile : ", pageDefFile)
+
+    pickle_file = f'{ROOTDIR}/CommandFiles/{pageDefFile}'
+    with open(pickle_file, 'rb') as pickle_obj:
+        cmdDesc, cmdCodes, param_files = pickle.load(pickle_obj)
+
+    headers = ["cmdDesc", "cmdCodes", "param_files"]
+    rows = zip(cmdDesc, cmdCodes, param_files)
+    print(tabulate(rows, headers, tablefmt="grid"))
+
+    print("cmdCodes len :",len(cmdCodes))
+    cmd_ind = random.randint(0, len(cmdCodes)-1)
+
+    command_file_name = param_files[cmd_ind]
+    pickle_file = f'{ROOTDIR}/ParameterFiles/' + command_file_name
+
+    print("\n===================== [Parameter] =====================")
+
+    print("pickle_file : ", pickle_file)
+    print(f"Command Parameter File Name(index:{cmd_ind}) : ", command_file_name)
+
+    if(checkParams(pickle_file) == False):
+        mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind])
+    else : 
+        with open(pickle_file, 'rb') as pickle_obj:
+            _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
+                pickle_obj) # paramDescription is only for GUI
+
+        # using these Lists for extract information dataTypesNew, stringLen
+
+        input_list = [] # input_list means user generate input
+        string_index = 0
+
+        for dataType in dataTypesNew:
+            if dataType == '--string':
+                length = int(stringLen[string_index])
+                input_list.append(generate_random_bytes(dataType, length))
+            else:
+                input_list.append(generate_random_bytes(dataType))
+            string_index += 1
 
         param_list = []
-
         # k, inpt mean just key:value
         for k, inpt in enumerate(input_list):
             dataType = dataTypesNew[k]
@@ -114,23 +152,28 @@ def start_send(host="127.0.0.1",
             else:
                 param_list.append(f'{dataType}={inpt}')  # --byte=4
 
-        print("param & input list : ", param_list)
-
         param_string = ' '.join(param_list)
+        mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind], param_string.strip())
 
-        mcu = MiniCmdUtil(host, port, endian, pktID, cmdCode, param_string.strip())
+        print(f"ParameterFile Name(index:{cmd_ind}) : ", command_file_name)
+        print(f"paramNames(len:{len(paramNames)}): ", paramNames)
+        print("dataTypesNew : ",dataTypesNew)
+        print("stringLen : ",stringLen)
+        print("generated input values : ", input_list)
+        print("param & input list : ", param_list)
 
     sendSuccess = mcu.sendPacket()
     print("Command sent successfully:", sendSuccess)
 
 if __name__ == "__main__":
     # Init main window
-    
     cmdDefFile = "command-pages.txt"
     cmdPageIsValid, cmdPageDesc, cmdPageDefFile, cmdPageAppid, \
         cmdPageEndian, cmdClass, cmdPageAddress, cmdPagePort = ([] for _ in range(8))
 
     i = 0
+
+    print("\n===================== [cmdDefFile] =====================")
 
     with open(f"{ROOTDIR}/{cmdDefFile}") as cmdfile:
         reader = csv.reader(cmdfile, skipinitialspace=True)
@@ -167,6 +210,7 @@ if __name__ == "__main__":
     print(tabulate(rows, headers, tablefmt="grid"))
 
     quickDefFile = 'quick-buttons.txt'
+
     subsys, subsysFile, quickCmd, quickCode, quickPktId,\
         quickEndian, quickAddress, quickPort, quickParam, \
             quickIndices = ([] for _ in range(10))
@@ -188,26 +232,28 @@ if __name__ == "__main__":
     # Print the quick command values in a tabular format
     quick_headers = ["Subsystem", "SubsysFile", "QuickCmd", "QuickCode", "QuickPktId", "QuickEndian", "QuickAddress", "QuickPort", "QuickParam"]
     quick_rows = zip(subsys, subsysFile, quickCmd, quickCode, quickPktId, quickEndian, quickAddress, quickPort, quickParam)
-    print(tabulate(quick_rows, quick_headers, tablefmt="grid"))
+    # print(tabulate(quick_rows, quick_headers, tablefmt="grid"))
 
     send_index = 0  # send_index 변수 선언
 
-    print(  subsys[send_index], 
-            subsysFile[send_index], 
-            quickCmd[send_index],
-            quickAddress[send_index],   
-            quickPort[send_index],     
-            quickEndian[send_index],   
-            quickPktId[send_index],    
-            quickCode[send_index])
+    # print(subsys[send_index],
+    #       subsysFile[send_index], 
+    #       quickCmd[send_index],
+    #       cmdPageAddress[send_index],   
+    #       cmdPagePort[send_index],     
+    #       cmdPageEndian[send_index],   
+    #       cmdPageAppid[send_index],    
+    #       quickCode[send_index])
 
+    #cmdPageAddress[0] -> There is only a one case! "127.0.0.1 1234 LE"
     start_send(
-            quickAddress[send_index],   
-            quickPort[send_index],     
-            quickEndian[send_index],   
-            quickPktId[send_index],    
-            quickCode[send_index])     
+          cmdPageAddress[send_index],
+          cmdPagePort[send_index],     
+          cmdPageEndian[send_index],   
+          hex(cmdPageAppid[send_index]))     
     
+    rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
+
 
     
 

@@ -66,6 +66,7 @@ class SubsystemCommands(QDialog, Ui_GenericCommandDialog):
         pf = f'{ROOTDIR}/ParameterFiles/{param_files[idx]}'
 
         print("param_files[idx] : ", param_files[idx])
+        print("pf:",pf)
 
         try:
             with open(pf, 'rb') as po:

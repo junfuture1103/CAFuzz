@@ -55,7 +55,6 @@ class MiniCmdUtil:
                  cmdCode=0,
                  parameters=None):
 
-        print(port, type(port))
         self.host = host
         self.port = int(port)
         self.endian = "big" if endian == "BE" else "little"
@@ -71,6 +70,13 @@ class MiniCmdUtil:
         self.cmdOffsetSec = 0
         self.checksum = 0xFF
         self.cfsCmdSecHdr = bytearray(2)
+
+        print("\n================ [SnedPacket info] ===============")
+        print(f"Host: {self.host}")
+        print(f"Port: {self.port}")
+        print(f"Endian: {self.endian}")
+        print(f"Packet ID: {hex(self.pktID)}")
+        print(f"Command Code: {self.cmdCode}")
 
     def assemblePriHeader(self):
         ccsdsPri = bytearray(6)
@@ -151,7 +157,8 @@ class MiniCmdUtil:
 
         # payload Assemble
         hex_string = ' '.join(f'{x:02X}({chr(x)})' for x in self.payload)
-        print('payload(len:{}):'.format(len(self.payload)), hex_string)
+        print('payload(len:{}):'.format(len(self.payload)))
+        print(hex_string)
         self.packet.extend(self.payload)
         self.checksum = 0xFF
         print()
