@@ -150,8 +150,9 @@ if __name__ == '__main__':
     with open(pickle_file, 'rb') as pickle_obj:
         _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
             pickle_obj)
-
-    print("_, paramNames, _, paramDesc, dataTypesNew, stringLen in pickle : ",
+        
+    print(param_file) # what is difference with param_file && param_file [0]
+    print(re.split(r'\.', param_file)[0], ": _, paramNames, _, paramDesc, dataTypesNew, stringLen in pickle : ",
            _, paramNames, _, paramDesc, dataTypesNew, stringLen)
     
     #

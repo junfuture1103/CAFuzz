@@ -63,7 +63,6 @@ def start_send(host="127.0.0.1",
                params = None):
     
     offsetinit = OffsetInit()
-    print(ROOTDIR)
 
     # param_file from
     param_file = 'struct_c_f_e___e_s___start_app_cmd__t.html'
@@ -72,29 +71,42 @@ def start_send(host="127.0.0.1",
     cmdCode=cmdCode[0]
     parameters=None
 
-    args = True
+    args = False
 
     if(args == True):
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCode)
     else : 
+        # 
+        pageDefFile = "CFE_ES_CMD"
+
+        pickle_file = f'{ROOTDIR}/CommandFiles/{pageDefFile}'
+        with open(pickle_file, 'rb') as pickle_obj:
+            cmdDesc, cmdCodes, param_files = pickle.load(pickle_obj)
+
+        headers = ["cmdDesc", "cmdCodes", "param_files"]
+        rows = zip(cmdDesc, cmdCodes, param_files)
+        print(tabulate(rows, headers, tablefmt="grid"))
+
         pickle_file = f'{ROOTDIR}/ParameterFiles/' + re.split(r'\.', param_file)[0]
 
-        print("pickle_file : ", pickle_file)
+        # print("pickle_file : ", pickle_file)
         with open(pickle_file, 'rb') as pickle_obj:
             _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
-                pickle_obj)
+                pickle_obj) # paramDescription is only for GUI
             
         input_list = []
         for j in range(0,1,1):
             # item = tbl.item(j, 2)
             input_list.append("12")
 
-        print("_, paramNames, _, paramDesc, dataTypesNew, stringLen : ", _, paramNames, _, paramDesc, dataTypesNew, stringLen)
-        
-        print("input_list : ", input_list)
+        print("===================== [Parameter] =====================")
+        print("ParameterFile Name : ", re.split(r'\.', param_file))
+        print("paramNames, dataTypesNew, stringLen : ", paramNames, dataTypesNew, stringLen)
+        print("generated input values : ", input_list)
 
         param_list = []
 
+        # k, inpt mean just key:value
         for k, inpt in enumerate(input_list):
             dataType = dataTypesNew[k]
             if dataType == '--string':
@@ -102,7 +114,8 @@ def start_send(host="127.0.0.1",
             else:
                 param_list.append(f'{dataType}={inpt}')  # --byte=4
 
-        print("k, inpt, param_list : ", k, inpt, param_list)
+        print("param & input list : ", param_list)
+
         param_string = ' '.join(param_list)
 
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCode, param_string.strip())
@@ -177,8 +190,25 @@ if __name__ == "__main__":
     quick_rows = zip(subsys, subsysFile, quickCmd, quickCode, quickPktId, quickEndian, quickAddress, quickPort, quickParam)
     print(tabulate(quick_rows, quick_headers, tablefmt="grid"))
 
-    start_send(quickAddress[0],
-               quickPort[0],
-               quickEndian[0],
-               quickPktId[0],
-               quickCode[0])
+    send_index = 0  # send_index 변수 선언
+
+    print(  subsys[send_index], 
+            subsysFile[send_index], 
+            quickCmd[send_index],
+            quickAddress[send_index],   
+            quickPort[send_index],     
+            quickEndian[send_index],   
+            quickPktId[send_index],    
+            quickCode[send_index])
+
+    start_send(
+            quickAddress[send_index],   
+            quickPort[send_index],     
+            quickEndian[send_index],   
+            quickPktId[send_index],    
+            quickCode[send_index])     
+    
+
+    
+
+    

@@ -64,9 +64,13 @@ class SubsystemCommands(QDialog, Ui_GenericCommandDialog):
     @staticmethod
     def checkParams(idx):
         pf = f'{ROOTDIR}/ParameterFiles/{param_files[idx]}'
+
+        print("param_files[idx] : ", param_files[idx])
+
         try:
             with open(pf, 'rb') as po:
                 paramNames = pickle.load(po)[1]
+                print("paramNames : ", paramNames)
             return len(paramNames) > 0  # if has parameters
         except IOError:
             return False

@@ -152,7 +152,7 @@ if __name__ == '__main__':
         _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
             pickle_obj)
 
-    print("_, paramNames, _, paramDesc, dataTypesNew, stringLen in pickle : ",
+    print(re.split(r'\.', param_file)[0], ": _, paramNames, _, paramDesc, dataTypesNew, stringLen in pickle : ",
            _, paramNames, _, paramDesc, dataTypesNew, stringLen)
     
     #

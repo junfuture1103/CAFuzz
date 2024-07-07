@@ -119,21 +119,42 @@ class MiniCmdUtil:
                     self.payload.extend(fixedLenStr)
 
     def assemblePacket(self):
+        print("\n===================== [Packet Assemble] =====================")
         self._getOffsets()
+        # priHeader Assemble
         priHeader = self.assemblePriHeader()
+        hex_string = ' '.join(format(x, '02X') for x in priHeader)
+        print('priHeader :', hex_string)
         self.packet.extend(priHeader)
+
+        # priOffset Assemble
         priOffset = bytearray(self.cmdOffsetPri)
+        hex_string = ' '.join(format(x, '02X') for x in priOffset)
+        print('priOffset :', hex_string)
         self.packet.extend(priOffset)
+
+        # cfsCmdSecHdr
         self.cfsCmdSecHdr[0] = self.cmdCode
         secOffset = bytearray(self.cmdOffsetSec)
         for b in b''.join((priHeader, priOffset, self.cfsCmdSecHdr, secOffset,
                            self.payload)):
             self.checksum ^= b
         self.cfsCmdSecHdr[1] = self.checksum
+        hex_string = ' '.join(format(x, '02X') for x in self.cfsCmdSecHdr)
+        print('cfsCmdSecHdr :', hex_string)
         self.packet.extend(self.cfsCmdSecHdr)
+        
+        # secOffset
+        hex_string = ' '.join(format(x, '02X') for x in secOffset)
+        print('secOffset :', hex_string)
         self.packet.extend(secOffset)
+
+        # payload Assemble
+        hex_string = ' '.join(f'{x:02X}({chr(x)})' for x in self.payload)
+        print('payload(len:{}):'.format(len(self.payload)), hex_string)
         self.packet.extend(self.payload)
         self.checksum = 0xFF
+        print()
 
     def sendPacket(self):
         self.assemblePacket()
