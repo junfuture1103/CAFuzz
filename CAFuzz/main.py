@@ -15,38 +15,39 @@ class OffsetInit():
     #
     def __init__(self):
         super().__init__()
-        self.setTlmOffset
-        self.setCmdOffsets
-        self.saveOffsets
+
+
+        self.setTlmOffset()
+        self.setCmdOffsets()
+        self.saveOffsets()
+
+        self.sbTlmOffset = None
+        self.sbCmdOffsetPri = None
+        self.sbCmdOffsetSec = None
 
     def setTlmOffset(self):
-        selectedVer = self.cbTlmHeaderVer.currentText().strip()
-        if selectedVer == "Custom":
-            self.sbTlmOffset.setEnabled(True)
-        else:
-            self.sbTlmOffset.setEnabled(False)
-            if selectedVer == "1":
-                self.sbTlmOffset.setValue(self.HDR_VER_1_OFFSET)
-            elif selectedVer == "2":
-                self.sbTlmOffset.setValue(self.HDR_VER_2_OFFSET)
+        # print("start setTlmOffset()")
+        selectedVer = "1"
 
+        if selectedVer == "1":
+            self.sbTlmOffset = self.HDR_VER_1_OFFSET
+        elif selectedVer == "2":
+            self.sbTlmOffset = self.HDR_VER_2_OFFSET
+            
     def setCmdOffsets(self):
-        selectedVer = self.cbCmdHeaderVer.currentText().strip()
-        if selectedVer == "Custom":
-            self.sbCmdOffsetPri.setEnabled(True)
-            self.sbCmdOffsetSec.setEnabled(True)
-        else:
-            self.sbCmdOffsetPri.setEnabled(False)
-            self.sbCmdOffsetSec.setEnabled(False)
-            if selectedVer == "1":
-                self.sbCmdOffsetPri.setValue(self.HDR_VER_1_OFFSET)
-            elif selectedVer == "2":
-                self.sbCmdOffsetPri.setValue(self.HDR_VER_2_OFFSET)
-            self.sbCmdOffsetSec.setValue(self.HDR_VER_1_OFFSET)
+        # print("start setCmdOffsets()")
+        selectedVer = "1"
+        
+        if selectedVer == "1":
+            self.sbCmdOffsetPri = self.HDR_VER_1_OFFSET
+        elif selectedVer == "2":
+            self.sbCmdOffsetPri = self.HDR_VER_2_OFFSET
+
+        self.sbCmdOffsetSec = self.HDR_VER_1_OFFSET
 
     def saveOffsets(self):
-        offsets = bytes((self.sbTlmOffset.value(), self.sbCmdOffsetPri.value(),
-                         self.sbCmdOffsetSec.value()))
+        # print("start saveOffsets()")
+        offsets = bytes((self.sbTlmOffset, self.sbCmdOffsetPri, self.sbCmdOffsetSec))
         with open("/tmp/OffsetData", "wb") as f:
             f.write(offsets)
 
@@ -68,16 +69,16 @@ def start_send(host="127.0.0.1",
     param_file = 'struct_c_f_e___e_s___start_app_cmd__t.html'
     param_file = 'TO_OUTPUT_ENABLE_CC'
 
-
     cmdCode=cmdCode[0]
     parameters=None
 
-    args = False
+    args = True
 
     if(args == True):
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCode)
     else : 
         pickle_file = f'{ROOTDIR}/ParameterFiles/' + re.split(r'\.', param_file)[0]
+
         print("pickle_file : ", pickle_file)
         with open(pickle_file, 'rb') as pickle_obj:
             _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
@@ -176,8 +177,8 @@ if __name__ == "__main__":
     quick_rows = zip(subsys, subsysFile, quickCmd, quickCode, quickPktId, quickEndian, quickAddress, quickPort, quickParam)
     print(tabulate(quick_rows, quick_headers, tablefmt="grid"))
 
-    start_send("127.0.0.1",
-               "1234",
-               "LE",
-               "0x1880",
+    start_send(quickAddress[0],
+               quickPort[0],
+               quickEndian[0],
+               quickPktId[0],
                quickCode[0])
