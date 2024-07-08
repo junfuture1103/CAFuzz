@@ -100,8 +100,8 @@ def start_send(host="127.0.0.1",
     offsetinit = OffsetInit()
 
     print("\n===================== [Parameter Def] =====================")
-    pageDefFile = "CFE_ES_CMD"
-    # pageDefFile = "CFE_SB_CMD"
+    # pageDefFile = "CFE_ES_CMD"
+    pageDefFile = "CFE_SB_CMD"
 
     print("Parameter DefFile : ", pageDefFile)
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     quick_rows = zip(subsys, subsysFile, quickCmd, quickCode, quickPktId, quickEndian, quickAddress, quickPort, quickParam)
     # print(tabulate(quick_rows, quick_headers, tablefmt="grid"))
 
-    send_index = 0 # send_index 변수 선언
+    send_index = 1  # send_index 변수 선언
 
     # print(subsys[send_index],
     #       subsysFile[send_index], 

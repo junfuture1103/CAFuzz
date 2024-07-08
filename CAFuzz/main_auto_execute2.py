@@ -12,7 +12,7 @@ def run_main_script():
             total_runs += 1
             try:
                 # main.py 실행, stderr를 캡처하여 오류 발생 시 파일에 기록
-                result = subprocess.run(['python3', 'main.py'], check=True, stderr=subprocess.PIPE, text=True)
+                result = subprocess.run(['python3', 'main2.py'], check=True, stderr=subprocess.PIPE, text=True)
             except subprocess.CalledProcessError as e:
                 error_count += 1
 
