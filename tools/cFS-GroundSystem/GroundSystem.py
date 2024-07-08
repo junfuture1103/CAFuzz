@@ -127,6 +127,7 @@ class GroundSystem(QMainWindow, Ui_MainWindow):
 
     def setTlmOffset(self):
         selectedVer = self.cbTlmHeaderVer.currentText().strip()
+        print("selectedVer in TlmOffset = ", selectedVer)
         if selectedVer == "Custom":
             self.sbTlmOffset.setEnabled(True)
         else:
@@ -138,6 +139,7 @@ class GroundSystem(QMainWindow, Ui_MainWindow):
 
     def setCmdOffsets(self):
         selectedVer = self.cbCmdHeaderVer.currentText().strip()
+        print("selectedVer in CmdOffsets = ", selectedVer)
         if selectedVer == "Custom":
             self.sbCmdOffsetPri.setEnabled(True)
             self.sbCmdOffsetSec.setEnabled(True)

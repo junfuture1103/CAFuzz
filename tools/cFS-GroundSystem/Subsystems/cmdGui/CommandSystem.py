@@ -54,6 +54,7 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
         if cmdPageIsValid[idx]:
             pktId = self.tblCmdSys.item(idx, 1).text()
             address = self.tblCmdSys.item(idx, 2).text()
+
             launch_string = (
                 f'python3 {ROOTDIR}/{cmdClass[0]} '
                 f'--title=\"{cmdPageDesc[idx]}\" --pktid={pktId} '
@@ -79,6 +80,7 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
 
     #
     # Processes quick button
+    # Quick Button is in the Main page ex) SB NO-OP
     #
     def ProcessQuickButton(self, idx):
         if cmdPageIsValid[idx] and quickIndices[idx] >= 0:
@@ -98,8 +100,10 @@ class CommandSystem(QDialog, Ui_CommandSystemDialog):
                     f'--port={quickPort[qIdx]} '
                     f'--pktid={pktId} --endian={quickEndian[qIdx]} '
                     f'--cmdcode={quickCode[qIdx]} --file={quickParam[qIdx]}')
-                print("launch_string in checkParams : ",launch_string)
                 
+                print("\n\nlaunch_string in checkParams : ",launch_string)
+                print("quickParam :", quickParam)
+
                 cmd_args = shlex.split(launch_string)
                 subprocess.Popen(cmd_args)
             # if doesn't require parameters
