@@ -20,7 +20,11 @@ typedef struct udp_send_mutator {
 } udp_send_mutator_t;
 
 void send_file_data(const char *buffer, size_t buf_size, const char *dest_ip, int dest_port) {
-    printf("==== send data! in custom mutator : %s ====\n", buffer);
+
+    printf("==== send data! in custom mutator : ====\n\n");
+    printf("%s\n\n", buffer);
+    printf("========================================\n\n");
+
     int sockfd;
     struct sockaddr_in destaddr;
 
@@ -92,15 +96,17 @@ int try_connect(int max_attempts) {
         nanosleep(&t, NULL);
         --max_attempts;
 
-        printf("=============== send custom udp! =============== %d\n", max_attempts);
+        printf("=============== send custom udp! ===============\n");
     }
     return 1;
 }
 void afl_custom_fuzz_send(udp_send_mutator_t *mutator, uint8_t *buf, size_t buf_size) {
-    
-
     try_connect(1);
-    
+
+    printf("==== afl_custom_fuzz_send ====\n\n");
+    printf("%s\n\n", buf);
+    printf("========================================\n\n");
+
     // 1st sendto => mutated commands
     send_file_data(buf, buf_size, "127.0.0.1", 1234);
 
