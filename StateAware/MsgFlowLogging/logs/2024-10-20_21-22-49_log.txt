@@ -1,0 +1,18 @@
+Server listening on 127.0.0.1:3000
+Got a connection from ('127.0.0.1', 52996)
+Received MsgSize: 4
+Received Data:
+0xAA 0xAA 0xAA 0xAA
+0xaa
+======START INGEST PACKET PROCESS ======
+Connection closed msg count = $1
+
+
+Got a connection from ('127.0.0.1', 53004)
+Received MsgSize: 7
+Received Data:
+0x18 0x86 0x40 0xFF 0x00 0x00 0x18
+0x18
+Connection closed msg count = $1
+
+

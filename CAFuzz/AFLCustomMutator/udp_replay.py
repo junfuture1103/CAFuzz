@@ -2,9 +2,9 @@ import os
 import socket
 import time
 
-# PATH = "./queue"
+PATH = "./queue"
 # PATH = "./ex_commands"
-PATH = "./test"
+# PATH = "./test"
 
 # 디렉터리 경로와 UDP 설정
 directory = PATH  # 파일들이 있는 디렉터리 경로
@@ -13,6 +13,8 @@ udp_port = 1234
 
 # UDP 소켓 생성
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+print("file len : ", len(os.listdir(directory)))
 
 # 디렉터리 내의 모든 파일 읽기
 for filename in os.listdir(directory):
