@@ -25,3 +25,10 @@ AFL_CUSTOM_MUTATOR_LIBRARY=/home/jun20/jun/kaist_research/CAFuzz/CAFuzz/AFLCusto
 
 (20241101) You have to start CAFuzz/StateAware/MsgFlowLogging/msg_flow_recv.py
 if you have a socket connect error in port 3000, then every input by AFL++ be TIMEOUT!
+
+custom mutator "must" have cFS terminate command after send FUZZ input
+```C
+    // cFS terminate command
+    const char modified_buffer[10] = {0x18, 0x06, 0xc0, 0x00, 0x00, 0x03, 0x02, 0x22, 0x02, 0x00};
+    send_file_data(modified_buffer, 10, "127.0.0.1", 1234);
+```
