@@ -175,6 +175,16 @@ class MiniCmdUtil:
         bytesSent = self.sock.sendto(self.packet, (self.host, self.port))
         return bytesSent > 0, self.packet
 
+    def genPacket(self):
+        self.assemblePacket()
+        print("Data to send:")
+        for i, v in enumerate(self.packet):
+            print(f"0x{format(v, '02X')}", end=" ")
+            if (i + 1) % 8 == 0:
+                print()
+        
+        return self.packet
+
     def _getOffsets(self):
         try:
             self.cmdOffsetPri = self.mm[1]
