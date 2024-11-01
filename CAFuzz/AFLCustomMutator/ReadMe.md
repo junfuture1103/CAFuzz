@@ -6,6 +6,7 @@ cc -O3 -shared -fPIC -o cFS_send_udp.so -I /AFLplusplus/include cFS_send_udp_cus
 
 Instrumentation cFS
 ```
+# Please use these commands Step-by-Step
 export CC=/AFLplusplus/afl-gcc-fast
 export CXX=/AFLplusplus/afl-gcc-fast++
 
