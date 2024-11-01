@@ -2,9 +2,9 @@ import os
 import socket
 import time
 
-# PATH = "./queue"
+PATH = "./queue"
 # PATH = "./ex_commands"
-PATH = "../generate_commands"
+# PATH = "../generate_commands"
 
 # 디렉터리 경로와 UDP 설정
 directory = PATH  # 파일들이 있는 디렉터리 경로
