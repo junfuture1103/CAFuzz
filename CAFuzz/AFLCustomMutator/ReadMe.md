@@ -76,3 +76,25 @@ custom mutator "must" have cFS terminate command after send FUZZ input
     const char modified_buffer[10] = {0x18, 0x06, 0xc0, 0x00, 0x00, 0x03, 0x02, 0x22, 0x02, 0x00};
     send_file_data(modified_buffer, 10, "127.0.0.1", 1234);
 ```
+
+## Experiment Command
+```sh
+# start msg_flow_recv.py
+python3 msg_flow_recv_logfile_seperation.py
+
+# if that cannot make new command, then execute these
+# generate_commands_no_send.py communicate with AFL custom mutator using /tmp/sent_packet.bin
+sudo rm /tmp/OffsetData
+sudo rm /tmp/sent_packet.bin
+
+# custom mutator build : cFS_send_udp_command_aware
+cc -O3 -shared -fPIC -o cFS_send_udp_command_aware.so -I /AFLplusplus/include cFS_send_udp_command_aware_custom_mutator.c
+
+# AFL++ execute with cFS_send_udp_command_aware
+sudo AFL_CUSTOM_MUTATOR_LIBRARY=/home/jun20/jun/kaist_research/CAFuzz/CAFuzz/AFLCustomMutator/cFS_send_udp_command_aware.so AFL_CUSTOM_MUTATOR_LATE_SEND=1 CUSTOM_SEND_READ=1 AFL_DEBUG=1 CUSTOM_SEND_IP=127.0.0.1 CUSTOM_SEND_PORT=1234 \
+/AFLplusplus/afl-fuzz -i in -o out -t 4000 -- ./core-cpu1
+
+# recommend to use "testing.sh"
+./testing.sh
+```
+Have a good MSG flow generation!
