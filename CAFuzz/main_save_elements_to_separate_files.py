@@ -8,10 +8,12 @@ from pathlib import Path
 import random
 import struct
 from datetime import datetime
+import os
 
 # mutation!!
 cmd_ind = 5
 
+commands_list = []
     
 def generate_random_bytes(dataType, length=None):
     if dataType == '--word':
@@ -23,6 +25,9 @@ def generate_random_bytes(dataType, length=None):
     elif dataType == '--byte':
         # 8-bit signed byte, Little Endian
         return struct.unpack('<b', struct.pack('<B', random.getrandbits(8)))[0]
+    elif dataType == 'int': # what the?
+        # 32-bit signed word, Little Endian
+        return struct.unpack('<i', struct.pack('<I', random.getrandbits(32)))[0]
     elif dataType == '--double':
         # 64-bit double, Little Endian
         return random.uniform(-1.7e+308, 1.7e+308)
@@ -93,6 +98,21 @@ def checkParams(pickle_file):
         return False
 
 
+# 각 요소를 개별 파일에 저장하는 함수
+def save_elements_to_separate_files(data_list):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    directory = f"generate_commands/mutation_{timestamp}"
+
+    # 출력 디렉토리가 없으면 생성
+    # if not os.path.exists(directory):
+    os.makedirs(directory)
+
+    # 각 요소를 개별 파일에 저장
+    for i, item in enumerate(data_list):
+        filename = os.path.join(directory, f"element_{i+1}.bin")
+        with open(filename, "wb") as f:
+            f.write(item)
+
 def start_send(host="127.0.0.1",
                port="1234",
                endian="LE",
@@ -144,6 +164,8 @@ def start_send(host="127.0.0.1",
         input_list = [] # input_list means user generate input
         string_index = 0
 
+        print("dataTypesNew :", dataTypesNew)
+
         for dataType in dataTypesNew:
             if dataType == '--string':
                 length = int(stringLen[string_index])
@@ -172,8 +194,26 @@ def start_send(host="127.0.0.1",
         print("param & input list : ", param_list)
 
     sendSuccess, sent_packet = mcu.sendPacket()
-    
-    return sendSuccess, sent_packet
+    print("Command sent successfully:", sendSuccess)
+    print("log by mcu generation")
+
+    global commands_list
+    commands_list.append(sent_packet)
+
+    # 현재 시간을 타임스탬프로 변환
+    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # filename = f"test_{timestamp}.bin"
+
+    # # 파일에 저장
+    # with open(filename, "wb") as f:
+    #     f.write(bytes(sent_packet))
+    # f.close()
+
+
+    for i, v in enumerate(sent_packet):
+        print(f"0x{format(v, '02X')}", end=" ")
+        if (i + 1) % 8 == 0:
+            print()
 
 
 if __name__ == "__main__":
@@ -262,36 +302,17 @@ if __name__ == "__main__":
     cmdfilenames = ["CFE_ES_CMD", "CFE_SB_CMD", "CFE_TBL_CMD", "CFE_TIME_CMD", "CFE_EVS_CMD", "CI_LAB_CMD", "TO_LAB_CMD", "SAMPLE_APP_CMD"]
     cmdfilename = random.choice(cmdfilenames)
 
-    sendSuccess, sent_packet = start_send(
-          cmdPageAddress[send_index],
-          cmdPagePort[send_index],     
-          cmdPageEndian[send_index],   
-          hex(cmdPageAppid[send_index]),
-          cmdfilename)     
-    
-    rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
+    commands_flow_count = random.randint(1,101)
+
+    for i in range(0, commands_flow_count, 1):
+        start_send(
+            cmdPageAddress[send_index],
+            cmdPagePort[send_index],     
+            cmdPageEndian[send_index],   
+            hex(cmdPageAppid[send_index]),
+            cmdfilename)     
+        
+        rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
 
 
-    print("Command sent successfully:", sendSuccess)
-    print("log by mcu generation")
-
-    # 현재 시간을 타임스탬프로 변환
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"./generate_commands/{timestamp}.bin"
-    # filename = f"/home/jun20/jun/kaist_research/cFS/build/exe/cpu1/in/{timestamp}.bin"
-    filename = f"/tmp/sent_packet.bin"
-
-    # 파일에 저장
-    with open(filename, "wb") as f:
-        f.write(bytes(sent_packet))
-    f.close()
-
-
-    for i, v in enumerate(sent_packet):
-        print(f"0x{format(v, '02X')}", end=" ")
-        if (i + 1) % 8 == 0:
-            print()
-
-    
-
-    
+    save_elements_to_separate_files(commands_list)

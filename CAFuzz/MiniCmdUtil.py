@@ -157,8 +157,8 @@ class MiniCmdUtil:
 
         # payload Assemble
         hex_string = ' '.join(f'{x:02X}({chr(x)})' for x in self.payload)
-        print('payload(len:{}):'.format(len(self.payload)))
-        print(hex_string)
+        # print('payload(len:{}):'.format(len(self.payload)))
+        # print(hex_string)
         self.packet.extend(self.payload)
         self.checksum = 0xFF
         print()
@@ -170,9 +170,10 @@ class MiniCmdUtil:
             print(f"0x{format(v, '02X')}", end=" ")
             if (i + 1) % 8 == 0:
                 print()
+        
         print()
         bytesSent = self.sock.sendto(self.packet, (self.host, self.port))
-        return bytesSent > 0
+        return bytesSent > 0, self.packet
 
     def _getOffsets(self):
         try:
