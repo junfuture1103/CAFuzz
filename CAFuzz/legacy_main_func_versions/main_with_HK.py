@@ -8,6 +8,7 @@ from pathlib import Path
 import random
 import struct
 from datetime import datetime
+import socket
 
 # mutation!!
 cmd_ind = 5
@@ -34,6 +35,29 @@ def generate_random_bytes(dataType, length=None):
     else:
         raise ValueError(f"Unknown data type: {dataType}")
     
+# 헥스 문자열을 바이트 배열로 변환하는 함수
+def parse_hex_string(hex_string):
+    hex_values = hex_string.split()  # 공백으로 각 헥스 값을 분리
+    return bytes(int(value, 16) for value in hex_values)  # 각 값을 16진수로 변환하여 바이트 배열 생성
+
+
+def send_command_HK(base_hex):    
+    # 대상 IP와 포트 설정
+    target_ip = "127.0.0.1"
+    target_port = 1234
+    
+    additional_hex = "C0 00 00 01 00 00"
+    combined_hex_string = f"{base_hex[:2]} {base_hex[2:]} {additional_hex}"  # '18 06 C0 00 00 01 00 00' 형식으로 변환
+
+    # 결합된 헥스 문자열을 바이트 배열로 변환
+    hex_data = parse_hex_string(combined_hex_string)
+
+    # UDP로 데이터 전송
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp_socket:
+        udp_socket.sendto(hex_data, (target_ip, target_port))
+
+    print(base_hex, "HK가 전송되었습니다:", combined_hex_string)
+
 class OffsetInit():
     HDR_VER_1_OFFSET = 0
     HDR_VER_2_OFFSET = 4
@@ -76,7 +100,7 @@ class OffsetInit():
     def saveOffsets(self):
         # print("start saveOffsets()")
         offsets = bytes((self.sbTlmOffset, self.sbCmdOffsetPri, self.sbCmdOffsetSec))
-        with open("/tmp/OffsetData2", "wb") as f:
+        with open("/tmp/OffsetData", "wb") as f:
             f.write(offsets)
 
 
@@ -132,6 +156,7 @@ def start_send(host="127.0.0.1",
     print("pickle_file : ", pickle_file)
     print(f"Command Parameter File Name(index:{cmd_ind}) : ", command_file_name)
 
+    print("pktID", pktID)
     if(checkParams(pickle_file) == False):
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind])
     else : 
@@ -171,10 +196,9 @@ def start_send(host="127.0.0.1",
         print("generated input values : ", input_list)
         print("param & input list : ", param_list)
 
-    # only here is different with main.py
-    sent_packet = mcu.genPacket()
+    sendSuccess, sent_packet = mcu.sendPacket()
     
-    return sent_packet
+    return sendSuccess, sent_packet
 
 
 if __name__ == "__main__":
@@ -261,18 +285,26 @@ if __name__ == "__main__":
 
     # pageDefFile = "CFE_ES_CMD"
     cmdfilenames = ["CFE_ES_CMD", "CFE_SB_CMD", "CFE_TBL_CMD", "CFE_TIME_CMD", "CFE_EVS_CMD", "CI_LAB_CMD", "TO_LAB_CMD", "SAMPLE_APP_CMD"]
-    cmdfilename = random.choice(cmdfilenames)
+    
+    print(cmdfilenames, len(cmdfilenames))
+    print(cmdPageAppid, len(cmdPageAppid))
 
-    sent_packet = start_send(
-          cmdPageAddress[send_index],
-          cmdPagePort[send_index],     
-          cmdPageEndian[send_index],   
+    send_index = random.randint(0,len(cmdfilenames)-1)
+    cmdfilename = cmdfilenames[send_index]
+
+    print(cmdfilename, hex(cmdPageAppid[send_index]))
+
+    sendSuccess, sent_packet = start_send(
+          cmdPageAddress[0],  #host="127.0.0.1",
+          cmdPagePort[0],     #port="1234"
+          cmdPageEndian[0],   #endian="LE"
           hex(cmdPageAppid[send_index]),
           cmdfilename)     
     
     rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
 
 
+    print("Command sent successfully:", sendSuccess)
     print("log by mcu generation")
 
     # 현재 시간을 타임스탬프로 변환
@@ -286,11 +318,12 @@ if __name__ == "__main__":
         f.write(bytes(sent_packet))
     f.close()
 
+
     for i, v in enumerate(sent_packet):
         print(f"0x{format(v, '02X')}", end=" ")
         if (i + 1) % 8 == 0:
             print()
 
-    
+    # send_command_HK(hex(cmdPageAppid[send_index])[2:])  # '0x' 제거 후 문자열로 변환
+    # just there is a HK msg!! only "Enable TLM out"
 
-    

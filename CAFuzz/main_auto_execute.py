@@ -28,6 +28,7 @@ def run_main_script():
                 #     error_file.write(f"stderr:\n{e.stderr}\n")
 
             # 필요한 경우 sleep을 통해 간격 조정
+            
             # time.sleep(1)  # 1초 대기 we dont need to wait ! it's fuzzing time!
 
     except KeyboardInterrupt:

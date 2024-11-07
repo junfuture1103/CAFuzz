@@ -101,7 +101,7 @@ def start_send(host="127.0.0.1",
     
     offsetinit = OffsetInit()
 
-    print("\n===================== [Parameter Def] =====================")
+    # print("\n===================== [Parameter Def] =====================")
     # pageDefFile = "CFE_ES_CMD"
     pageDefFile = cmdfilename
     # pageDefFile = "CFE_TBL_CMD"
@@ -111,7 +111,7 @@ def start_send(host="127.0.0.1",
     # pageDefFile = "TO_LAB_CMD"
     # pageDefFile = "SAMPLE_APP_CMD"
     
-    print("Parameter DefFile : ", pageDefFile)
+    # print("Parameter DefFile : ", pageDefFile)
 
     pickle_file = f'{ROOTDIR}/CommandFiles/{pageDefFile}'
     with open(pickle_file, 'rb') as pickle_obj:
@@ -119,9 +119,9 @@ def start_send(host="127.0.0.1",
 
     headers = ["cmdDesc", "cmdCodes", "param_files"]
     rows = zip(cmdDesc, cmdCodes, param_files)
-    print(tabulate(rows, headers, tablefmt="grid"))
+    # print(tabulate(rows, headers, tablefmt="grid"))
 
-    print("cmdCodes len :",len(cmdCodes))
+    # print("cmdCodes len :",len(cmdCodes))
     cmd_ind = random.randint(0, len(cmdCodes)-1)
 
     command_file_name = param_files[cmd_ind]
@@ -129,9 +129,10 @@ def start_send(host="127.0.0.1",
 
     print("\n===================== [Parameter] =====================")
 
-    print("pickle_file : ", pickle_file)
-    print(f"Command Parameter File Name(index:{cmd_ind}) : ", command_file_name)
+    # print("pickle_file : ", pickle_file)
+    # print(f"Command Parameter File Name(index:{cmd_ind}) : ", command_file_name)
 
+    # print("pktID", pktID)
     if(checkParams(pickle_file) == False):
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind])
     else : 
@@ -164,12 +165,12 @@ def start_send(host="127.0.0.1",
         param_string = ' '.join(param_list)
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind], param_string.strip())
 
-        print(f"ParameterFile Name(index:{cmd_ind}) : ", command_file_name)
-        print(f"paramNames(len:{len(paramNames)}): ", paramNames)
-        print("dataTypesNew : ",dataTypesNew)
-        print("stringLen : ",stringLen)
-        print("generated input values : ", input_list)
-        print("param & input list : ", param_list)
+        # print(f"ParameterFile Name(index:{cmd_ind}) : ", command_file_name)
+        # print(f"paramNames(len:{len(paramNames)}): ", paramNames)
+        # print("dataTypesNew : ",dataTypesNew)
+        # print("stringLen : ",stringLen)
+        # print("generated input values : ", input_list)
+        # print("param & input list : ", param_list)
 
     sendSuccess, sent_packet = mcu.sendPacket()
     
@@ -218,7 +219,7 @@ if __name__ == "__main__":
     headers = ["IsValid", "Description", "DefFile", "AppID", "Endian", "Class", "Address", "Port"]
     rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile, cmdPageAppid, cmdPageEndian, cmdClass, cmdPageAddress, cmdPagePort)
 
-    print(tabulate(rows, headers, tablefmt="grid"))
+    # print(tabulate(rows, headers, tablefmt="grid"))
 
     quickDefFile = 'quick-buttons.txt'
 
@@ -260,38 +261,42 @@ if __name__ == "__main__":
 
     # pageDefFile = "CFE_ES_CMD"
     cmdfilenames = ["CFE_ES_CMD", "CFE_SB_CMD", "CFE_TBL_CMD", "CFE_TIME_CMD", "CFE_EVS_CMD", "CI_LAB_CMD", "TO_LAB_CMD", "SAMPLE_APP_CMD"]
-    cmdfilename = random.choice(cmdfilenames)
+    
+    # print(cmdfilenames, len(cmdfilenames))
+    # print(cmdPageAppid, len(cmdPageAppid))
+
+    send_index = random.randint(0,len(cmdfilenames)-1)
+    cmdfilename = cmdfilenames[send_index]
+
+    # print(cmdfilename, hex(cmdPageAppid[send_index]))
 
     sendSuccess, sent_packet = start_send(
-          cmdPageAddress[send_index],
-          cmdPagePort[send_index],     
-          cmdPageEndian[send_index],   
+          cmdPageAddress[0],  #host="127.0.0.1",
+          cmdPagePort[0],     #port="1234"
+          cmdPageEndian[0],   #endian="LE"
           hex(cmdPageAppid[send_index]),
           cmdfilename)     
     
     rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
 
 
-    print("Command sent successfully:", sendSuccess)
-    print("log by mcu generation")
+    # print("Command sent successfully:", sendSuccess)
+    # print("log by mcu generation")
 
     # 현재 시간을 타임스탬프로 변환
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"./generate_commands/{timestamp}.bin"
+    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # filename = f"./generate_commands/{timestamp}.bin"
     # filename = f"/home/jun20/jun/kaist_research/cFS/build/exe/cpu1/in/{timestamp}.bin"
-    filename = f"/tmp/sent_packet.bin"
+    # filename = f"/tmp/sent_packet.bin"
 
     # 파일에 저장
-    with open(filename, "wb") as f:
-        f.write(bytes(sent_packet))
-    f.close()
+    # if you use AFL-mutator..
+    # with open(filename, "wb") as f:
+    #     f.write(bytes(sent_packet))
+    # f.close()
 
 
-    for i, v in enumerate(sent_packet):
-        print(f"0x{format(v, '02X')}", end=" ")
-        if (i + 1) % 8 == 0:
-            print()
-
-    
-
-    
+    # for i, v in enumerate(sent_packet):
+    #     print(f"0x{format(v, '02X')}", end=" ")
+    #     if (i + 1) % 8 == 0:
+    #         print()

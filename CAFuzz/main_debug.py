@@ -76,7 +76,7 @@ class OffsetInit():
     def saveOffsets(self):
         # print("start saveOffsets()")
         offsets = bytes((self.sbTlmOffset, self.sbCmdOffsetPri, self.sbCmdOffsetSec))
-        with open("/tmp/OffsetData2", "wb") as f:
+        with open("/tmp/OffsetData", "wb") as f:
             f.write(offsets)
 
 
@@ -132,6 +132,7 @@ def start_send(host="127.0.0.1",
     print("pickle_file : ", pickle_file)
     print(f"Command Parameter File Name(index:{cmd_ind}) : ", command_file_name)
 
+    print("pktID", pktID)
     if(checkParams(pickle_file) == False):
         mcu = MiniCmdUtil(host, port, endian, pktID, cmdCodes[cmd_ind])
     else : 
@@ -171,10 +172,9 @@ def start_send(host="127.0.0.1",
         print("generated input values : ", input_list)
         print("param & input list : ", param_list)
 
-    # only here is different with main.py
-    sent_packet = mcu.genPacket()
+    sendSuccess, sent_packet = mcu.sendPacket()
     
-    return sent_packet
+    return sendSuccess, sent_packet
 
 
 if __name__ == "__main__":
@@ -261,18 +261,26 @@ if __name__ == "__main__":
 
     # pageDefFile = "CFE_ES_CMD"
     cmdfilenames = ["CFE_ES_CMD", "CFE_SB_CMD", "CFE_TBL_CMD", "CFE_TIME_CMD", "CFE_EVS_CMD", "CI_LAB_CMD", "TO_LAB_CMD", "SAMPLE_APP_CMD"]
-    cmdfilename = random.choice(cmdfilenames)
+    
+    print(cmdfilenames, len(cmdfilenames))
+    print(cmdPageAppid, len(cmdPageAppid))
 
-    sent_packet = start_send(
-          cmdPageAddress[send_index],
-          cmdPagePort[send_index],     
-          cmdPageEndian[send_index],   
+    send_index = random.randint(0,len(cmdfilenames)-1)
+    cmdfilename = cmdfilenames[send_index]
+
+    print(cmdfilename, hex(cmdPageAppid[send_index]))
+
+    sendSuccess, sent_packet = start_send(
+          cmdPageAddress[0],  #host="127.0.0.1",
+          cmdPagePort[0],     #port="1234"
+          cmdPageEndian[0],   #endian="LE"
           hex(cmdPageAppid[send_index]),
           cmdfilename)     
     
     rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
 
 
+    print("Command sent successfully:", sendSuccess)
     print("log by mcu generation")
 
     # 현재 시간을 타임스탬프로 변환
@@ -286,11 +294,11 @@ if __name__ == "__main__":
         f.write(bytes(sent_packet))
     f.close()
 
+
     for i, v in enumerate(sent_packet):
         print(f"0x{format(v, '02X')}", end=" ")
         if (i + 1) % 8 == 0:
             print()
 
     
-
-    
+    print(send_index)

@@ -231,7 +231,9 @@ void afl_custom_fuzz_send(udp_send_mutator_t *mutator, uint8_t *buf, size_t buf_
     send_counts(random_int);  // random_int 전송
 
     for (int i = 0; i<random_int; i++){
+        // if really finished Process the command : TO receive Done.
         try_wait(1);
+        
         // start generate comand using python
         int ret = system("python3 /home/jun20/jun/kaist_research/CAFuzz/CAFuzz/generate_command_not_send.py");
         if (ret != 0) {
