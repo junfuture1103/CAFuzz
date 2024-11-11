@@ -1,9 +1,9 @@
-#msg_flow_recv.py -> if there are too many logs, then just seperate files
+# msg_flow_recv_logfile_seperation is better. because it is good at log management
+
 import socket
 import struct
 import logging
 from datetime import datetime
-from logging.handlers import RotatingFileHandler
 
 def main():
     host = '127.0.0.1'
@@ -14,36 +14,12 @@ def main():
 
     # 현재 날짜와 시간을 기반으로 로그 파일 이름 생성
     log_filename = datetime.now().strftime('%Y-%m-%d_%H-%M-%S_log.txt')
-    path = "./logs/" + log_filename
-    
-    # RotatingFileHandler 설정: 파일 길이가 200,000줄을 넘으면 새로운 파일 생성
-    max_lines = 500000
-    line_count_handler = RotatingFileHandler(path, mode='a', encoding='utf-8', backupCount=10000)
-    line_count_handler.setLevel(logging.INFO)
-
-    # 커스텀 필터를 사용하여 줄 수를 기준으로 파일 회전
-    class LineCountFilter(logging.Filter):
-        def __init__(self, max_lines):
-            super().__init__()
-            self.max_lines = max_lines
-            self.line_count = 0
-        
-        def filter(self, record):
-            self.line_count += 1
-            if self.line_count > self.max_lines:
-                self.line_count = 1
-                # 파일 회전
-                line_count_handler.doRollover()
-            return True
-
-    line_count_filter = LineCountFilter(max_lines)
-    line_count_handler.addFilter(line_count_filter)
-
+    path = "./logs/"+log_filename
     # 로깅 설정: 파일과 콘솔에 동시에 출력
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',
                         handlers=[
-                            line_count_handler,
+                            logging.FileHandler(path, encoding='utf-8'),
                             logging.StreamHandler()
                         ])
 
@@ -104,6 +80,7 @@ def main():
                 logging.info("======START INGEST PACKET PROCESS ======")
                 msg_count += 1
                 new_ground_command = 1
+                
 
             # if data[0] == 0xFF:
             #     logging.info("======ENDINGEST PACKET PROCESS ======")
