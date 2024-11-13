@@ -1,4 +1,3 @@
-#msg_flow_recv.py -> if there are too many logs, then just seperate files
 import socket
 import struct
 import logging
@@ -11,6 +10,7 @@ def main():
 
     msg_count = 0
     new_ground_command = 0
+    logging_enabled = False # 로깅 활성화 상태 변수
 
     # 현재 날짜와 시간을 기반으로 로그 파일 이름 생성
     log_filename = datetime.now().strftime('%Y-%m-%d_%H-%M-%S_log.txt')
@@ -60,19 +60,21 @@ def main():
     while True:
         # 연결 수락
         clientsocket, addr = serversocket.accept()
-        logging.info(f"Got a connection from {addr}")
+        # logging.info(f"Got a connection from {addr}")
 
         try:
             # MsgSize 수신 (4바이트)
             raw_size = clientsocket.recv(4)
             if len(raw_size) < 4:
-                logging.info("Failed to receive MsgSize")
+                if logging_enabled:
+                    logging.info("Failed to receive MsgSize")
                 clientsocket.close()
                 continue
 
             # MsgSize 언패킹
             MsgSize = struct.unpack('!I', raw_size)[0]
-            logging.info(f"Received MsgSize: {MsgSize}")
+            if logging_enabled:
+                logging.info(f"Received MsgSize: {MsgSize}")
 
             # 메시지 데이터 수신
             data = b''
@@ -83,34 +85,49 @@ def main():
                 data += packet
 
             if len(data) < MsgSize:
-                logging.info("Failed to receive complete message data")
+                if logging_enabled:
+                    logging.info("Failed to receive complete message data")
                 clientsocket.close()
                 continue
 
             # 원하는 형식으로 데이터 로깅
-            logging.info("Received Data:")
-            for i in range(0, len(data), 8):
-                line_data = data[i:i+8]
-                hex_line = ' '.join(f"0x{byte:02X}" for byte in line_data)
-                logging.info(hex_line)
+            if logging_enabled:
+                logging.info("Received Data:")
+                for i in range(0, len(data), 8):
+                    line_data = data[i:i+8]
+                    hex_line = ' '.join(f"0x{byte:02X}" for byte in line_data)
+                    logging.info(hex_line)
 
-            logging.info(hex(data[0]))
-
-            if new_ground_command == 1:
-                logging.info("\n========== Ground Command Was ==========\n")
+            # =================== Data Pharsing ======================== #
+            if new_ground_command == 1 and logging_enabled:
+                logging.info("\n========== Ground Command Was ==========")
                 new_ground_command = 0
 
+            # 특정 메시지 패턴 감지 (예: 시작 패킷)
             if data[0] == 0xAA:
-                logging.info("======START INGEST PACKET PROCESS ======")
+                if logging_enabled:
+                    logging.info("======START INGEST PACKET PROCESS ======")
                 msg_count += 1
                 new_ground_command = 1
 
-            # if data[0] == 0xFF:
-            #     logging.info("======ENDINGEST PACKET PROCESS ======")
-                    
+            # cFS 종료 패킷 감지
+            expected_data = b'\x18\x06\xC0\x00\x00\x03\x02\x22\x02\x00'
+            if data[:len(expected_data)] == expected_data:
+                logging.info("====== cFS kill PACKET RECEIVED ======")
+                logging.info("Received the cFS kill pattern. Pausing logging until specific pattern received...\n")
+                logging_enabled = False
+
+            # 로깅을 다시 시작할 패턴 (cFS operation start) 감지
+            resume_logging_pattern = b'\x63\x46\x53\x20\x6F\x70\x65\x72\x61\x74\x69\x6F\x6E\x20\x73\x74\x61\x72\x74'
+            if data[:len(resume_logging_pattern)] == resume_logging_pattern:
+                logging.info("====== cFS Operation Start : Resume Logging ======")
+                logging.info("Resuming logging...\n")
+                logging_enabled = True
+
         finally:
             clientsocket.close()
-            logging.info("Connection closed msg count = ${}\n\n".format(msg_count))
+            if logging_enabled:
+                logging.info(f"Connection closed msg count = {msg_count}\n\n")
 
 if __name__ == "__main__":
     main()
