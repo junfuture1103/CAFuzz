@@ -64,6 +64,7 @@ def send_cFS_exit_to_msg_flow_recv():
 def start_server(ip, port):
     # 소켓 생성 및 바인딩
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # SO_REUSEADDR 옵션 설정
     server_socket.bind((ip, port))
     server_socket.listen(1)
     print(f"Listening on {ip}:{port}...")
