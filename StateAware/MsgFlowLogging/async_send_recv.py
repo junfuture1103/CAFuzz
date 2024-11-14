@@ -14,6 +14,15 @@ initial_message = bytes([0x18, 0x80, 0xC0, 0x00, 0x00, 0x11, 0x06, 0x9B,
                             0x31, 0x32, 0x37, 0x2E, 0x30, 0x2E, 0x30, 0x2E, 
                             0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
 
+# Do not use! Just use send_cFS_exit_pkt
+# def kill_process_by_name(name):
+#     try:
+#         # core-cpu1 이름의 프로세스를 찾아서 종료
+#         subprocess.run(["pkill", "-f", name])
+#         print(f"Process {name} killed.")
+#     except Exception as e:
+#         print(f"Failed to kill process {name}: {e}")
+
 def send_tlm_init_pkt(listen_ip = "127.0.0.1", send_port = 1234):
     # Tlm init start
     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -60,10 +69,16 @@ def start_server(ip, port):
     print(f"Listening on {ip}:{port}...")
 
     while True:
-        conn, addr = server_socket.accept()
-        print(f"Connection established with {addr}")
+        # accept 타임아웃 
+        timeout = 5
+        server_socket.settimeout(timeout)
 
         try:
+            conn, addr = server_socket.accept()
+            print(f"Connection established with {addr}")
+
+            server_socket.settimeout(None)
+
             # 메시지 길이 먼저 수신
             msg_length_data = conn.recv(4)
             if not msg_length_data:
@@ -79,11 +94,18 @@ def start_server(ip, port):
             print(f"Message received: {message}")
             return True
         
+        # cFS already started
+        except socket.timeout:
+            print("No response from cFS within timeout period.")
+            # 타임아웃 발생 시 core-cpu1 프로그램 종료
+            send_cFS_exit_pkt()
+
         except Exception as e:
             print(f"An error occurred: {e}")
         finally:
-            conn.close()
-            print("Connection closed.")
+            if 'conn' in locals():
+                conn.close()
+                print("Connection closed.")
 
 
 def udp_communication():
