@@ -1,3 +1,6 @@
+# main.py -> random index choice
+# main_debug.py -> select index manually
+
 from MiniCmdUtil import MiniCmdUtil
 import csv
 from tabulate import tabulate
@@ -12,7 +15,7 @@ from datetime import datetime
 # mutation!!
 cmd_ind = 5
 
-    
+# gen bytes by Type 
 def generate_random_bytes(dataType, length=None):
     if dataType == '--word':
         # 32-bit signed word, Little Endian
@@ -43,7 +46,6 @@ class OffsetInit():
     #
     def __init__(self):
         super().__init__()
-
 
         self.setTlmOffset()
         self.setCmdOffsets()
@@ -122,7 +124,10 @@ def start_send(host="127.0.0.1",
     print(tabulate(rows, headers, tablefmt="grid"))
 
     print("cmdCodes len :",len(cmdCodes))
-    cmd_ind = random.randint(0, len(cmdCodes)-1)
+    # cmd_ind = random.randint(0, len(cmdCodes)-1)
+    # 20241205 juntheworld - ES 22 command
+    cmd_ind = 7
+
 
     command_file_name = param_files[cmd_ind]
     pickle_file = f'{ROOTDIR}/ParameterFiles/' + command_file_name
@@ -139,18 +144,24 @@ def start_send(host="127.0.0.1",
         with open(pickle_file, 'rb') as pickle_obj:
             _, paramNames, _, paramDesc, dataTypesNew, stringLen = pickle.load(
                 pickle_obj) # paramDescription is only for GUI
+            print("_, paramNames, _, paramDesc, dataTypesNew, stringLen : ", _, paramNames, _, paramDesc, dataTypesNew, stringLen)
 
         # using these Lists for extract information dataTypesNew, stringLen
 
+        # CREATE RANDOM INPUT!!!
         input_list = [] # input_list means user generate input
         string_index = 0
 
         for dataType in dataTypesNew:
             if dataType == '--string':
                 length = int(stringLen[string_index])
-                input_list.append(generate_random_bytes(dataType, length))
+                # must delete by juntheworld
+                # input_list.append(generate_random_bytes(dataType, length))
+                input_list.append('test')
             else:
-                input_list.append(generate_random_bytes(dataType))
+                # must delete by juntheworld
+                # input_list.append(generate_random_bytes(dataType))
+                input_list.append(2)
             string_index += 1
 
         param_list = []
@@ -265,20 +276,22 @@ if __name__ == "__main__":
     print(cmdfilenames, len(cmdfilenames))
     print(cmdPageAppid, len(cmdPageAppid))
 
-    send_index = random.randint(0,len(cmdfilenames)-1)
+    # send_index = random.randint(0,len(cmdfilenames)-1)
+    # 20241205 juntheworld - ES
+    send_index = 3
     cmdfilename = cmdfilenames[send_index]
 
     print(cmdfilename, hex(cmdPageAppid[send_index]))
 
     sendSuccess, sent_packet = start_send(
-          cmdPageAddress[0],  #host="127.0.0.1",
+          # cmdPageAddress[0],  #host="127.0.0.1",
+          "192.168.254.131",
           cmdPagePort[0],     #port="1234"
           cmdPageEndian[0],   #endian="LE"
           hex(cmdPageAppid[send_index]),
           cmdfilename)     
     
     rows = zip(cmdPageIsValid, cmdPageDesc, cmdPageDefFile,)
-
 
     print("Command sent successfully:", sendSuccess)
     print("log by mcu generation")

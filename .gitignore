@@ -4,6 +4,7 @@ StateAware/MsgFlowLogging/cf
 StateAware/MsgFlowLogging/program_log.txt
 StateAware/MsgFlowLogging/subprocess_log.txt
 StateAware/MsgFlowLogging/udp_packet_log.txt
+StateAware/LogPharsing/cFS_output_log/*
 
 # Ignore hidden key files and data files
 StateAware/MsgFlowLogging/.cdskeyfile
@@ -14,5 +15,9 @@ StateAware/MsgFlowLogging/EEPROM.DAT
 # Ignore testing scripts and temporary directories
 StateAware/MsgFlowLogging/trim/
 StateAware/MsgFlowLogging/HK_tlm_logs/
+
+# Ignore snapshot img & iso
+SnapshotFuzzing/iso/*
+SnapshotFuzzing/qcow2/*
 
 # Ignore others

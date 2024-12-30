@@ -1,3 +1,4 @@
+# just send one packet
 from MiniCmdUtil import MiniCmdUtil
 import csv
 from tabulate import tabulate
@@ -11,7 +12,6 @@ from datetime import datetime
 
 # mutation!!
 cmd_ind = 5
-
     
 def generate_random_bytes(dataType, length=None):
     if dataType == '--word':
@@ -259,7 +259,7 @@ if __name__ == "__main__":
 
     #cmdPageAddress[0] -> There is only a one case! "127.0.0.1 1234 LE"
 
-    # pageDefFile = "CFE_ES_CMD"
+    pageDefFile = "CFE_ES_CMD"
     cmdfilenames = ["CFE_ES_CMD", "CFE_SB_CMD", "CFE_TBL_CMD", "CFE_TIME_CMD", "CFE_EVS_CMD", "CI_LAB_CMD", "TO_LAB_CMD", "SAMPLE_APP_CMD"]
     
     # print(cmdfilenames, len(cmdfilenames))

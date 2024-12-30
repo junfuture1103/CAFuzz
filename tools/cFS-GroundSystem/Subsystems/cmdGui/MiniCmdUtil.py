@@ -28,7 +28,7 @@ from collections import namedtuple
 
 class MiniCmdUtil:
     ## Class objects
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.SOCK_DGRAM)
     TypeSignature = namedtuple("TypeSignature", 'byteLen, signed, endian')
     dataTypes = {
         ("b", "int8", "byte"): TypeSignature(1, True, None),
