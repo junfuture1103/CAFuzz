@@ -125,6 +125,7 @@ qemu-system-x86_64 \
 ```
 
 2. execute python script
+snapshot-fuzzing.py is just example
 
 ```bash
 python3 main_audto_execute_for_snapshot_speed_test.py
