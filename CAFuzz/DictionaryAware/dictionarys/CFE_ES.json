@@ -1,0 +1,214 @@
+{
+  "constraints": {
+    "CFE_ES_NOOP_CC": {
+      "description": "No parameters needed",
+      "params": []
+    },
+    "CFE_ES_RESET_COUNTERS_CC": {
+      "description": "No parameters needed",
+      "params": []
+    },
+    "CFE_ES_RESTART_CC": {
+      "description": "Either 0 or 1",
+      "params": [
+        {
+          "type": "enum",
+          "possible_values": [0, 1]
+        }
+      ]
+    },
+    "CFE_ES_SHELL_CC": {
+      "description": "Deprecated, no parameters",
+      "params": []
+    },
+    "CFE_ES_START_APP_CC": {
+      "description": "One parameter: application name from a fixed list",
+      "params": [
+        {
+          "type": "enum_string",
+          "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+        }
+      ]
+    },
+    "CFE_ES_STOP_APP_CC": {
+      "description": "One parameter: application name from a fixed list",
+      "params": [
+        {
+          "type": "enum_string",
+          "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+        }
+      ]
+    },
+    "CFE_ES_RESTART_APP_CC": {
+      "description": "One parameter: application name from a fixed list",
+      "params": [
+        {
+          "type": "enum_string",
+          "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+        }
+      ]
+    },
+    "CFE_ES_RELOAD_APP_CC": {
+      "description": "Two parameters: application name and file name",
+      "params": [
+        {
+          "type": "enum_string",
+          "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+        },
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_QUERY_ONE_CC": {
+      "description": "One parameter: application name",
+      "params": [
+        {
+          "type": "enum_string",
+          "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+        }
+      ]
+    },
+    "CFE_ES_QUERY_ALL_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_CLEAR_SYSLOG_CC": {
+      "description": "No parameters needed",
+      "params": []
+    },
+    "CFE_ES_WRITE_SYSLOG_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_CLEAR_ER_LOG_CC": {
+      "description": "No parameters needed",
+      "params": []
+    },
+    "CFE_ES_WRITE_ER_LOG_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_START_PERF_DATA_CC": {
+      "description": "One parameter: must be 0, 1, or 2",
+      "params": [
+        {
+          "type": "enum",
+          "possible_values": [0, 1, 2]
+        }
+      ]
+    },
+    "CFE_ES_STOP_PERF_DATA_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_SET_PERF_FILTER_MASK_CC": {
+      "description": "Two parameters: (0-3) and (0~2147483647)",
+      "params": [
+        {
+          "type": "range",
+          "min": 0,
+          "max": 3
+        },
+        {
+          "type": "range",
+          "min": 0,
+          "max": 2147483647
+        }
+      ]
+    },
+    "CFE_ES_SET_PERF_TRIGGER_MASK_CC": {
+      "description": "Two parameters: (0-3) and (0~2147483647)",
+      "params": [
+        {
+          "type": "range",
+          "min": 0,
+          "max": 3
+        },
+        {
+          "type": "range",
+          "min": 0,
+          "max": 2147483647
+        }
+      ]
+    },
+    "CFE_ES_OVER_WRITE_SYSLOG_CC": {
+      "description": "One parameter: 0 or 1",
+      "params": [
+        {
+          "type": "enum",
+          "possible_values": [0, 1]
+        }
+      ]
+    },
+    "CFE_ES_RESET_PR_COUNT_CC": {
+      "description": "No parameters needed",
+      "params": []
+    },
+    "CFE_ES_SET_MAX_PR_COUNT_CC": {
+      "description": "One parameter: 0-65535 range",
+      "params": [
+        {
+          "type": "range",
+          "min": 0,
+          "max": 65535
+        }
+      ]
+    },
+    "CFE_ES_DELETE_CDS_CC": {
+      "description": "Unclear usage (?)",
+      "params": []
+    },
+    "CFE_ES_SEND_MEM_POOL_STATS_CC": {
+      "description": "Unclear usage (?)",
+      "params": []
+    },
+    "CFE_ES_DUMP_CDS_REGISTRY_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    },
+    "CFE_ES_QUERY_ALL_TASKS_CC": {
+      "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+      "params": [
+        {
+          "type": "string",
+          "prefix": "/ram/",
+          "max_len": 20
+        }
+      ]
+    }
+  }
+}
+
