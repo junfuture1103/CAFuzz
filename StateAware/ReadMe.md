@@ -27,6 +27,24 @@ cd cFS
 ./vm-setup.sh
 ```
 
+vm-setup.sh
+```
+# git clone https://github.com/nasa/cFS.git
+# cd cFS
+git checkout origin/msg-flow-log
+
+git submodule init
+git submodule update
+
+cp cfe/cmake/Makefile.sample Makefile
+cp -r cfe/cmake/sample_defs sample_defs
+
+make SIMULATION=native prep
+make
+make install
+cd build/exe/cpu1/
+```
+
 ### 3. Start Original Hex Packet Receiver (Have to be execute VM first)
 ```sh
 python3 MsgFlowLogging/msg_flow_recv_logfile_seperation.py
