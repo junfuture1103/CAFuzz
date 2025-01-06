@@ -210,6 +210,38 @@ if __name__ == "__main__":
         print(f"총 실행 횟수: {total_runs}")
         print(f"총 cycle 실행 횟수: {total_cycles}")
         print(f"오류 횟수: {error_count}")
+```
 
+# STDOUT Log 받는 법
 
+QEMU의 User Networking(-net user 혹은 -netdev user) 모드는 내부적으로 SLiRP라는 가상 네트워킹 스택을 사용한다. 이때 SLiRP에서 정한 디폴트 라우터(게스트가 바라보는 게이트웨이) 주소가 10.0.2.2로 지정되어 있다. 즉, 게스트 측에서 보았을 때
+
+게스트 IP: 10.0.2.15 (기본값)
+게이트웨이(Gateway): 10.0.2.2
+DNS 서버: 10.0.2.3
+와 같은 식으로 미리 설정된 주소 할당 규칙을 따른다.
+
+SLiRP는 원래 과거에 다이얼업(dial-up) 환경 등에서 “유저 공간”에서 동작하는 TCP/IP 스택을 제공하기 위해 사용되었는데, QEMU는 이를 응용해 호스트에서 별도의 커널 레벨 브리지 없이도 간단히 가상머신에 NAT 네트워킹을 제공하기 위해 SLiRP를 탑재했다. 그 결과 내부 IP 대역과 라우터 주소가 이렇게 고정된 디폴트를 갖게 된 것이다.
+
+## 사용법
+
+qemu 실행시 반드시 : 
+```
+qemu-system-x86_64 \
+   -enable-kvm \
+   -m 4096 \
+   -hda ./qcow2/ubuntu_vm.qcow2 \
+   -netdev user,id=net0,hostfwd=udp::1234-:1234,hostfwd=udp::1235-:1235,hostfwd=udp::3000-:3000 \
+   -device e1000,netdev=net0 \
+   -monitor telnet:127.0.0.1:4444,server,nowait
+```
+
+게스트에서 : 
+```
+sudo ./core-cpu1 | nc -u 10.0.2.2 3000
+```
+
+호스트에서 : 
+```
+nc -u -l 3000
 ```
