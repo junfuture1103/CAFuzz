@@ -1,5 +1,10 @@
-# 1. QEMU VM start
+### 1. QEMU VM start
 start the vm using .qcow2 file (if you don't have it, make it first)
+1234 : Command Host -> Guest
+1235 : Telemetry Guest -> Host
+3000 : Orig Hex Guest -> Host
+3001 : stdout Guest -> Host
+
 ```sh
 qemu-system-x86_64 \
   -enable-kvm \
@@ -15,24 +20,24 @@ TBD
 ```
 
 
-# 2. Modified cFS install into the QEMU VM
+### 2. Modified cFS install into the QEMU VM
 ```sh
 git clone https://github.com/junfuture1103/cFS
 cd cFS
 ./vm-setup.sh
 ```
 
-# 3. Start Original Hex Packet Receiver (Have to be execute VM first)
-```python
+### 3. Start Original Hex Packet Receiver (Have to be execute VM first)
+```sh
 python3 MsgFlowLogging/msg_flow_recv_logfile_seperation.py
 ```
 
-# 4. Start Getting stdout of the VM cFS (Have to execute VM first)
-```
+### 4. Start Getting stdout of the VM cFS (Have to execute VM first)
+```sh
 ./get_cFS_stdout.sh
 ```
 
-# 5. Start Mutate & Sending (Have to execute VM first)
-```python
+### 5. Start Mutate & Sending (Have to execute VM first)
+```sh
 python3 MsgFlowLogging/async_send_recv_snapshot_version.py
 ```
