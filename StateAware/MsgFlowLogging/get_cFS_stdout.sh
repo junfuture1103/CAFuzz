@@ -11,7 +11,7 @@ DATESTR=$(date +%Y-%m-%d_%H%M%S)
 # 로그 디렉터리 및 파일명 설정
 LOGDIR="./logs"
 mkdir -p "${LOGDIR}"
-LOGFILE="${LOGDIR}/netcat_${DATESTR}.log"
+LOGFILE="${LOGDIR}/stdout_${DATESTR}.log"
 
 PORT=3001
 

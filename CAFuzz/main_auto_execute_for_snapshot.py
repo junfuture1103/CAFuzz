@@ -5,7 +5,8 @@ import os
 from datetime import datetime
 import telnetlib
 
-snapshot_name = "snapshot-done"
+# snapshot_name = "snapshot-done"
+snapshot_name = "snapshot-fuzzing-cFS"
 
 # 현재 날짜와 시간을 포맷하여 문자열로 변환
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
