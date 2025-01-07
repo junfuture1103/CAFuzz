@@ -54,6 +54,11 @@ make install
 cd build/exe/cpu1/
 ```
 
+start cFS
+```
+sudo ./core-cpu1 2>&1 | tee >(nc -u 10.0.2.2 3001)
+```
+
 ### 3. Start Original Hex Packet Receiver (Have to be execute VM first)
 ```sh
 python3 MsgFlowLogging/msg_flow_recv_logfile_seperation.py
