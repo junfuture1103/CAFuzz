@@ -1,3 +1,5 @@
+# MSG Flow 수집 테스팅 가이드
+
 ### 1. QEMU VM start
 start the vm using .qcow2 file (if you don't have it, make it first)
 1234 : Command Host -> Guest
@@ -14,9 +16,16 @@ qemu-system-x86_64 \
   -device e1000,netdev=net0 \
   -monitor telnet:127.0.0.1:4444,server,nowait
 ```
-savevm
+
+#### savevm
+telnet (4444 port) connection
 ```
 TBD
+```
+
+save vm command
+```
+
 ```
 
 
