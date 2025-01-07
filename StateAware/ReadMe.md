@@ -17,15 +17,37 @@ qemu-system-x86_64 \
   -monitor telnet:127.0.0.1:4444,server,nowait
 ```
 
+using cache
+
+```sh
+qemu-system-x86_64 \
+  -enable-kvm \
+  -m 4096 \
+  -drive file=./qcow2/ubuntu_vm.qcow2,if=virtio,cache=writeback \
+  -netdev user,id=net0,hostfwd=udp::1234-:1234,hostfwd=udp::1235-:1235,hostfwd=udp::3000-:3000,hostfwd=udp::3001-:3001 \
+  -device e1000,netdev=net0 \
+  -monitor telnet:127.0.0.1:4444,server,nowait
+```
+
 #### savevm
 telnet (4444 port) connection
 ```
-TBD
+telnet 127.0.0.1 4444
 ```
 
 save vm command
 ```
+(qemu) savevm snapshot-fuzzing
+```
 
+check info snapshots
+```
+(qemu) info snapshots
+```
+
+delete snapshot
+```
+(qemu) delvm snapshot-fuzzing
 ```
 
 
@@ -61,7 +83,7 @@ sudo ./core-cpu1 2>&1 | tee >(nc -u 10.0.2.2 3001)
 
 ### 3. Start Original Hex Packet Receiver (Have to be execute VM first)
 ```sh
-python3 MsgFlowLogging/msg_flow_recv_logfile_seperation.py
+python3 get_cFS_msg_hex.py
 ```
 
 ### 4. Start Getting stdout of the VM cFS (Have to execute VM first)
@@ -98,6 +120,13 @@ nc -u -l -k "${PORT}" | tee "${LOGFILE}"
 ```
 
 ### 5. Start Mutate & Sending (Have to execute VM first)
+
+async send
 ```sh
 python3 MsgFlowLogging/async_send_recv_snapshot_version.py
+```
+
+random testing
+```sh
+python3 main_auto_execute_for_snapshot.py
 ```
