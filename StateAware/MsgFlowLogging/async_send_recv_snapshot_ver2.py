@@ -8,12 +8,21 @@ import struct
 import telnetlib
 
 # cFS Exit
-final_message = bytes([0x18, 0x06, 0xc0, 0x00, 0x00, 0x03, 0x02, 0x22, 0x02, 0x00])
+# final_message = bytes([0x18, 0x06, 0xc0, 0x00, 0x00, 0x03, 0x02, 0x22, 0x02, 0x00])
+final_message = bytes([102, 105, 110, 105, 115, 104, 32, 49, 32, 99, 121, 99, 108, 101])
 
-# Tlm enable
-initial_message = bytes([0x18, 0x80, 0xC0, 0x00, 0x00, 0x11, 0x06, 0x9B, 
-                            0x31, 0x32, 0x37, 0x2E, 0x30, 0x2E, 0x30, 0x2E, 
-                            0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+# Tlm enable -> 127.0.0.1 X 10.0.2.2 O (in VM)
+# 127.0.0.1
+# initial_message = bytes([0x18, 0x80, 0xC0, 0x00, 0x00, 0x11, 0x06, 0x9B, 
+#                             0x31, 0x32, 0x37, 0x2E, 0x30, 0x2E, 0x30, 0x2E, 
+#                             0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+# 10.0.2.2
+initial_message = bytes([0x18, 0x80, 0xC0, 0x00, 0x00, 0x11, 0x06, 0xaf, 
+                            0x31, 0x30, 0x2E, 0x30, 0x2E, 0x32, 0x2E, 
+                            0x32, 0x00, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x00])
+
+
 
 # Do not use! Just use send_cFS_exit_pkt
 # def kill_process_by_name(name):
@@ -31,22 +40,22 @@ def send_tlm_init_pkt(listen_ip = "127.0.0.1", send_port = 1234):
     print(f"Tlm init cFS message sent to port {send_port}")
     send_socket.close()
 
-def send_cFS_exit_pkt(listen_ip = "127.0.0.1", send_port = 1234):
-    # maybe we don't need this!
-    send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    send_socket.sendto(final_message, (listen_ip, send_port))
-    print(f"exit cFS message sent to port {send_port}")
-    send_socket.close()
+# def send_cFS_exit_pkt(listen_ip = "127.0.0.1", send_port = 3001):
+#     # maybe we don't need this!
+#     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     send_socket.sendto(final_message, (listen_ip, send_port))
+#     print(f"exit cFS message sent to port {send_port}")
+#     send_socket.close()
 
 
-    print(f"Loading snapshot: {snapshot_name}")
-    load_result = send_cmd(tn, f"loadvm {snapshot_name}")
-    print(f"Snapshot Load Result:\n{load_result}")
-    # send_cFS_exit_to_msg_flow_recv()
+#     print(f"Loading snapshot: {snapshot_name}")
+#     load_result = send_cmd(tn, f"loadvm {snapshot_name}")
+#     print(f"Snapshot Load Result:\n{load_result}")
+#     # send_cFS_exit_to_msg_flow_recv()
 
 def send_cFS_exit_to_msg_flow_recv():
     host = '127.0.0.1'
-    port = 3000
+    port = 3001
 
     # 소켓 객체 생성
     clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -67,52 +76,52 @@ def send_cFS_exit_to_msg_flow_recv():
     finally:
         clientsocket.close()
 
-def start_server(ip, port):
-    # 소켓 생성 및 바인딩
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # SO_REUSEADDR 옵션 설정
-    server_socket.bind((ip, port))
-    server_socket.listen(1)
-    print(f"Listening on {ip}:{port}...")
+# def start_server(ip, port):
+#     # 소켓 생성 및 바인딩
+#     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # SO_REUSEADDR 옵션 설정
+#     server_socket.bind((ip, port))
+#     server_socket.listen(1)
+#     print(f"Listening on {ip}:{port}...")
 
-    while True:
-        # accept 타임아웃 
-        timeout = 5
-        server_socket.settimeout(timeout)
+#     while True:
+#         # accept 타임아웃 
+#         timeout = 5
+#         server_socket.settimeout(timeout)
 
-        try:
-            conn, addr = server_socket.accept()
-            print(f"Connection established with {addr}")
+#         try:
+#             conn, addr = server_socket.accept()
+#             print(f"Connection established with {addr}")
 
-            server_socket.settimeout(None)
+#             server_socket.settimeout(None)
 
-            # 메시지 길이 먼저 수신
-            msg_length_data = conn.recv(4)
-            if not msg_length_data:
-                print("Failed to receive message length.")
-                conn.close()
-                continue
+#             # 메시지 길이 먼저 수신
+#             msg_length_data = conn.recv(4)
+#             if not msg_length_data:
+#                 print("Failed to receive message length.")
+#                 conn.close()
+#                 continue
 
-            msg_length = struct.unpack('!I', msg_length_data)[0]
-            print(f"Message length received: {msg_length}")
+#             msg_length = struct.unpack('!I', msg_length_data)[0]
+#             print(f"Message length received: {msg_length}")
 
-            # 실제 메시지 수신
-            message = conn.recv(msg_length).decode()
-            print(f"Message received: {message}")
-            return True
+#             # 실제 메시지 수신
+#             message = conn.recv(msg_length).decode()
+#             print(f"Message received: {message}")
+#             return True
         
-        # cFS already started
-        except socket.timeout:
-            print("No response from cFS within timeout period.")
-            # 타임아웃 발생 시 core-cpu1 프로그램 종료
-            send_cFS_exit_pkt()
+#         # cFS already started
+#         except socket.timeout:
+#             print("No response from cFS within timeout period.")
+#             # 타임아웃 발생 시 core-cpu1 프로그램 종료
+#             send_cFS_exit_pkt()
 
-        except Exception as e:
-            print(f"An error occurred: {e}")
-        finally:
-            if 'conn' in locals():
-                conn.close()
-                print("Connection closed.")
+#         except Exception as e:
+#             print(f"An error occurred: {e}")
+#         finally:
+#             if 'conn' in locals():
+#                 conn.close()
+#                 print("Connection closed.")
 
 
 def udp_communication():
@@ -126,31 +135,33 @@ def udp_communication():
     attempt_count = 0
 
     # Wait until cFS Operation Start (not just process start)
-    if(start_server(listen_ip, listen_port)):
-        print("start msg sending routine!!")
-        send_tlm_init_pkt()
+    # if(start_server(listen_ip, listen_port)):
+    #     print("start msg sending routine!!")
+    #     send_tlm_init_pkt()
 
 
     while True:
         # 수신 소켓 설정
         recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        recv_socket.bind((listen_ip, listen_port))
 
-        # 송신 소켓 설정
-        send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # SO_REUSEADDR 옵션 활성화 - Ignore : Address already in use 
+        recv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+        recv_socket.bind((listen_ip, listen_port))
 
         # 1초 동안 수신 대기
         recv_socket.setblocking(0)
-        ready = select.select([recv_socket], [], [], 0.5)
+        ready = select.select([recv_socket], [], [], 2)
 
         if ready[0]:
             # 응답이 오면 바로 1234 포트로 데이터 전송
+            print("TLM message recv!")
             data, addr = recv_socket.recvfrom(1024)
             print(f"Received Tlm message: {data} from {addr}")
             result = subprocess.run(['python3', '/home/jun20/jun/kaist_research/CAFuzz/CAFuzz/main.py'], check=True, stderr=subprocess.PIPE, text=True)
         else:
             # 1초 동안 응답이 없으면 자동으로 1234 포트로 데이터 전송
-            print("No response received within 0.5 second.")
+            print("No response received within 5 second.")
             result = subprocess.run(['python3', '/home/jun20/jun/kaist_research/CAFuzz/CAFuzz/main.py'], check=True, stderr=subprocess.PIPE, text=True)
    
         attempt_count += 1
@@ -164,10 +175,9 @@ def udp_communication():
 
         # 소켓 닫기
         recv_socket.close()
-        send_socket.close()
 
     # 마지막으로 1234 포트에 특정 메시지 전송
-    send_cFS_exit_pkt()
+    send_cFS_exit_to_msg_flow_recv()
 
     print(f"udp_communication attempt {attempt_count} finished. Waiting next attempt...")
 
@@ -198,22 +208,10 @@ if __name__ == "__main__":
     attempt_number = 1
 
     while True:
+        # re-load the snapshot after 1 test cycle
+        print(f"Loading snapshot: {snapshot_name}")
+        load_result = send_cmd(tn, f"loadvm {snapshot_name}")
+        print(f"Snapshot Load Result:\n{load_result}")
+
+        send_tlm_init_pkt()
         udp_communication()
-
-    # while True:
-    #     print(f"Starting udp_communication attempt number: {attempt_number}")    
-
-    #     try:
-    #         result = subprocess.run(['pgrep', '-f', 'core-cpu1'], stdout=subprocess.PIPE, text=True)
-    #         if not result.stdout:
-    #             print("core-cpu1 is not running. Please Start core-cpu1...")
-    #             time.sleep(1)  # 프로세스가 실행될 시간을 주기 위해 대기
-    #         else:
-    #             print("core-cpu1 is running. start udp_communication")
-    #             udp_communication()
-    #             break
-    #     except subprocess.CalledProcessError:
-    #         print("CalledProcessError. Waiting pgrep...")
-    #         time.sleep(5)  # 프로세스가 실행될 시간을 주기 위해 대기 
-
-    #     attempt_number += 1

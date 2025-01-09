@@ -63,7 +63,12 @@ def main():
     script_path = os.path.abspath(__file__)            # 현재 파이썬 파일의 절대 경로
     script_dir = os.path.dirname(script_path)          # 디렉토리 경로 추출
 
-    dictionary_name = "CFE_ES.json"
+    dictionary_names = ["CFE_ES.json", "CFE_EVS.json", "CFE_SB.json", "CFE_TBL.json", "CFE_TIME.json"]
+
+    # 0부터 4 사이의 랜덤 숫자 선택
+    random_number = random.randint(0, 4)
+    dictionary_name = dictionary_names[random_number]
+    
     file_name = os.path.join(script_dir, "dictionarys", dictionary_name)
 
     with open(file_name, "r", encoding="utf-8") as f:

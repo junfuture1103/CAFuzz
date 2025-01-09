@@ -1,0 +1,95 @@
+{
+    "constraints": {
+      "CFE_SB_NOOP_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_SB_RESET_COUNTERS_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_SB_SEND_SB_STATS_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_SB_SEND_ROUTING_INFO_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_SB_ENABLE_ROUTE_CC": {
+        "description": "Three parameters: MsgId, pipe, spare",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 31
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_SB_DISABLE_ROUTE_CC": {
+        "description": "Three parameters: MsgId, pipe, spare",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 31
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_SB_SEND_PIPE_INFO_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_SB_SEND_MAP_INFO_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_SB_ENABLE_SUB_REPORTING_CC": {
+        "description": "No parameters (cannot be sent from ground; inter-app only)",
+        "params": []
+      },
+      "CFE_SB_DISABLE_SUB_REPORTING_CC": {
+        "description": "No parameters (cannot be sent from ground; inter-app only)",
+        "params": []
+      },
+      "CFE_SB_SEND_PREV_SUBS_CC": {
+        "description": "No parameters (cannot be sent from ground; inter-app only)",
+        "params": []
+      }
+    }
+  }
+  

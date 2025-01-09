@@ -1,0 +1,255 @@
+{
+    "constraints": {
+      "CFE_EVS_NOOP_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_EVS_RESET_COUNTERS_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_EVS_ENABLE_EVENT_TYPE_CC": {
+        "description": "Two parameters: 1-15, 0-127 (spare)",
+        "params": [
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 127
+          }
+        ]
+      },
+      "CFE_EVS_DISABLE_EVENT_TYPE_CC": {
+        "description": "Two parameters: 1-15, 0-127 (spare)",
+        "params": [
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 127
+          }
+        ]
+      },
+      "CFE_EVS_SET_EVENT_FORMAT_MODE_CC": {
+        "description": "Two parameters: MsgFormat, spare (usage unspecified)",
+        "params": [
+          {
+            "type": "unknown"
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_EVS_ENABLE_APP_EVENT_TYPE_CC": {
+        "description": "Three parameters: AppName, 1-15, spare",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_EVS_DISABLE_APP_EVENT_TYPE_CC": {
+        "description": "Three parameters: AppName, 1-15, spare",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_EVS_ENABLE_APP_EVENTS_CC": {
+        "description": "One parameter: AppName",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          }
+        ]
+      },
+      "CFE_EVS_DISABLE_APP_EVENTS_CC": {
+        "description": "One parameter: AppName",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          }
+        ]
+      },
+      "CFE_EVS_RESET_APP_COUNTER_CC": {
+        "description": "One parameter: AppName",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          }
+        ]
+      },
+      "CFE_EVS_SET_FILTER_CC": {
+        "description": "Three parameters: AppName, EventId, Mask",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      },
+      "CFE_EVS_ENABLE_PORTS_CC": {
+        "description": "Two parameters: 1-15, 0-127 (spare)",
+        "params": [
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 127
+          }
+        ]
+      },
+      "CFE_EVS_DISABLE_PORTS_CC": {
+        "description": "Two parameters: 1-15, 0-127 (spare)",
+        "params": [
+          {
+            "type": "range",
+            "min": 1,
+            "max": 15
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 127
+          }
+        ]
+      },
+      "CFE_EVS_RESET_FILTER_CC": {
+        "description": "Two parameters: AppName, EventId",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      },
+      "CFE_EVS_RESET_ALL_FILTERS_CC": {
+        "description": "One parameter: AppName",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          }
+        ]
+      },
+      "CFE_EVS_ADD_EVENT_FILTER_CC": {
+        "description": "Three parameters: AppName, EventId, Mask",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      },
+      "CFE_EVS_DELETE_EVENT_FILTER_CC": {
+        "description": "Two parameters: AppName, EventId",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["CFE_ES", "SAMPLE_APP", "USER_APP", "TEST_APP"]
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      },
+      "CFE_EVS_WRITE_APP_DATA_FILE_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_EVS_WRITE_LOG_DATA_FILE_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_EVS_SET_LOG_MODE_CC": {
+        "description": "Two parameters: unknown usage (?), spare",
+        "params": [
+          {
+            "type": "unknown"
+          },
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_EVS_CLEAR_LOG_CC": {
+        "description": "No parameters needed",
+        "params": []
+      }
+    }
+  }
+  

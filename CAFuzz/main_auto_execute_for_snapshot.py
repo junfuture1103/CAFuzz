@@ -24,9 +24,20 @@ def send_cmd(tn, cmd):
     tn.write(cmd.encode('utf-8') + b'\n')
     return tn.read_until(b"(qemu) ").decode('utf-8')
 
-def run_main_script():
+def send_cFS_cmd():
     global total_runs, error_count
 
+    total_runs += 1
+    try:
+        # main.py 실행, stderr를 캡처하여 오류 발생 시 파일에 기록
+        result = subprocess.run(['python3', 'main.py'],
+                                check=True,
+                                stderr=subprocess.PIPE,
+                                text=True)
+    except subprocess.CalledProcessError as e:
+        error_count += 1
+
+def run_main_script():
     random_attempts = random.randint(0, 100)
     attempt_count = 0
 
@@ -34,17 +45,9 @@ def run_main_script():
         if attempt_count >= random_attempts:
             break
 
-        total_runs += 1
         attempt_count += 1
-
-        try:
-            # main.py 실행, stderr를 캡처하여 오류 발생 시 파일에 기록
-            result = subprocess.run(['python3', 'main.py'],
-                                    check=True,
-                                    stderr=subprocess.PIPE,
-                                    text=True)
-        except subprocess.CalledProcessError as e:
-            error_count += 1
+        # wait here for the new cmd signal
+        send_cFS_cmd()
         
 
 if __name__ == "__main__":

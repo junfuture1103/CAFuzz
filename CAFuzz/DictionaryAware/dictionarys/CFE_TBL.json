@@ -1,0 +1,99 @@
+{
+    "constraints": {
+      "CFE_TBL_NOOP_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_TBL_RESET_COUNTERS_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_TBL_LOAD_CC": {
+        "description": "One parameter: Load filename (usage unspecified)",
+        "params": [
+          {
+            "type": "string",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_TBL_DUMP_CC": {
+        "description": "Three parameters: ActiveTableFlag, TableName, output file < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "enum",
+            "possible_values": [0, 1]
+          },
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          },
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_TBL_VALIDATE_CC": {
+        "description": "Two parameters: ActiveTableFlag, TableName",
+        "params": [
+          {
+            "type": "enum",
+            "possible_values": [0, 1]
+          },
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          }
+        ]
+      },
+      "CFE_TBL_ACTIVATE_CC": {
+        "description": "One parameter: TableName, which is currently inactive",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          }
+        ]
+      },
+      "CFE_TBL_DUMP_REGISTRY_CC": {
+        "description": "One parameter: total length < 20 bytes (prefix /ram/)",
+        "params": [
+          {
+            "type": "string",
+            "prefix": "/ram/",
+            "max_len": 20
+          }
+        ]
+      },
+      "CFE_TBL_SEND_REGISTRY_CC": {
+        "description": "One parameter: TableName from registry",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          }
+        ]
+      },
+      "CFE_TBL_DELETE_CDS_CC": {
+        "description": "One parameter: TableName from registry (must be unregistered)",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          }
+        ]
+      },
+      "CFE_TBL_ABORT_LOAD_CC": {
+        "description": "One parameter: TableName (table in load-start state)",
+        "params": [
+          {
+            "type": "enum_string",
+            "possible_values": ["Table1", "Table2", "Table3", "TEST_TBL"]
+          }
+        ]
+      }
+    }
+  }
+  

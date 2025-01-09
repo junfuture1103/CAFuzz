@@ -1,0 +1,175 @@
+{
+    "constraints": {
+      "CFE_TIME_NOOP_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_TIME_RESET_COUNTERS_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_TIME_SEND_DIAGNOSTIC_TLM_CC": {
+        "description": "No parameters needed",
+        "params": []
+      },
+      "CFE_TIME_SET_SOURCE_CC": {
+        "description": "One parameter: 1 or 2 (valid), or 0x0000 - 0xFFFF (invalid?).",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 65535
+          }
+        ]
+      },
+      "CFE_TIME_SET_STATE_CC": {
+        "description": "One parameter: -1(INVALID), 0(VALID), 1(FLYWHEEL)",
+        "params": [
+          {
+            "type": "enum",
+            "possible_values": [-1, 0, 1]
+          }
+        ]
+      },
+      "CFE_TIME_ADD_DELAY_CC": {
+        "description": "One parameter, usage unclear (CFE_PLATFORM_TIME_CFG_CLIENT=TRUE)",
+        "params": [
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_TIME_SUB_DELAY_CC": {
+        "description": "One parameter, usage unclear (CFE_PLATFORM_TIME_CFG_CLIENT=TRUE)",
+        "params": [
+          {
+            "type": "unknown"
+          }
+        ]
+      },
+      "CFE_TIME_SET_TIME_CC": {
+        "description": "Two parameters: each 0~2147483647 (combination may be invalid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SET_MET_CC": {
+        "description": "Two parameters: each 0~2147483647 (combination may be invalid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SET_STCF_CC": {
+        "description": "Two parameters: each 0~2147483647 (combination may be invalid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SET_LEAP_SECONDS_CC": {
+        "description": "One parameter: 0~32767",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 32767
+          }
+        ]
+      },
+      "CFE_TIME_ADD_ADJUST_CC": {
+        "description": "Two parameters: each 0~2147483647 (combination may be invalid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SUB_ADJUST_CC": {
+        "description": "Two parameters: each 0~2147483647 (combination may be invalid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_ADD_1HZ_ADJUSTMENT_CC": {
+        "description": "Two parameters: each 0~2147483647 (always valid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SUB_1HZ_ADJUSTMENT_CC": {
+        "description": "Two parameters: each 0~2147483647 (always valid)",
+        "params": [
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          },
+          {
+            "type": "range",
+            "min": 0,
+            "max": 2147483647
+          }
+        ]
+      },
+      "CFE_TIME_SET_SIGNAL_CC": {
+        "description": "One parameter, usage unclear if TIME_CFG_CLIENT=TRUE",
+        "params": [
+          {
+            "type": "unknown"
+          }
+        ]
+      }
+    }
+  }
+  
