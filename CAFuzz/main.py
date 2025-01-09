@@ -1,4 +1,5 @@
 # just send one packet
+# from CFSCmdUtil import *
 from MiniCmdUtil import MiniCmdUtil
 import csv
 from tabulate import tabulate
