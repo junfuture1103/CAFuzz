@@ -86,9 +86,6 @@ class MiniCmdUtil:
         self.assemblePayload()
         totalPacketLen += len(self.payload)
         totalPacketLen += self.cmdOffsetPri + self.cmdOffsetSec
-        # by juntheworld
-        totalPacketLen = 32
-        print(f"totalPacketLen : {totalPacketLen}")
         ccsdsPri[4:] = (totalPacketLen - 7).to_bytes(2, byteorder="big")
         return ccsdsPri
 
