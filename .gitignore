@@ -1,5 +1,6 @@
 # Ignore log files and related temporary files
 StateAware/MsgFlowLogging/logs/*
+StateAware/MsgFlowLogging/async_send_recv/snapshot/logs/*
 StateAware/MsgFlowLogging/cf
 StateAware/MsgFlowLogging/program_log.txt
 StateAware/MsgFlowLogging/subprocess_log.txt

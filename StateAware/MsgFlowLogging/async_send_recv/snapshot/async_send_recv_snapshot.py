@@ -40,88 +40,25 @@ def send_tlm_init_pkt(listen_ip = "127.0.0.1", send_port = 1234):
     print(f"Tlm init cFS message sent to port {send_port}")
     send_socket.close()
 
-# def send_cFS_exit_pkt(listen_ip = "127.0.0.1", send_port = 3001):
-#     # maybe we don't need this!
-#     send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#     send_socket.sendto(final_message, (listen_ip, send_port))
-#     print(f"exit cFS message sent to port {send_port}")
-#     send_socket.close()
-
-
-#     print(f"Loading snapshot: {snapshot_name}")
-#     load_result = send_cmd(tn, f"loadvm {snapshot_name}")
-#     print(f"Snapshot Load Result:\n{load_result}")
-#     # send_cFS_exit_to_msg_flow_recv()
-
 def send_cFS_exit_to_msg_flow_recv():
     host = '127.0.0.1'
-    port = 3001
+    ports = [3000, 3001]  # 메시지를 보낼 포트 목록
 
-    # 소켓 객체 생성
-    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # 보낼 메시지 데이터 (예: "EXIT"라는 패턴을 포함)
+    message = b'========= one cycle done =========='
+    MsgSize = len(message)
+    packed_size = struct.pack('!I', MsgSize)
 
-    try:
-        # 서버에 연결
-        clientsocket.connect((host, port))
-        
-        # 보낼 메시지 데이터 (예: "EXIT"라는 패턴을 포함)
-        message = b'\x18\x06\xC0\x00\x00\x03\x02\x22\x02\x00'  # cFS 종료 패킷 패턴
-        MsgSize = len(message)
-        packed_size = struct.pack('!I', MsgSize)
-
-        # 메시지 전송
-        clientsocket.sendall(packed_size)
-        clientsocket.sendall(message)
-
-    finally:
-        clientsocket.close()
-
-# def start_server(ip, port):
-#     # 소켓 생성 및 바인딩
-#     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # SO_REUSEADDR 옵션 설정
-#     server_socket.bind((ip, port))
-#     server_socket.listen(1)
-#     print(f"Listening on {ip}:{port}...")
-
-#     while True:
-#         # accept 타임아웃 
-#         timeout = 5
-#         server_socket.settimeout(timeout)
-
-#         try:
-#             conn, addr = server_socket.accept()
-#             print(f"Connection established with {addr}")
-
-#             server_socket.settimeout(None)
-
-#             # 메시지 길이 먼저 수신
-#             msg_length_data = conn.recv(4)
-#             if not msg_length_data:
-#                 print("Failed to receive message length.")
-#                 conn.close()
-#                 continue
-
-#             msg_length = struct.unpack('!I', msg_length_data)[0]
-#             print(f"Message length received: {msg_length}")
-
-#             # 실제 메시지 수신
-#             message = conn.recv(msg_length).decode()
-#             print(f"Message received: {message}")
-#             return True
-        
-#         # cFS already started
-#         except socket.timeout:
-#             print("No response from cFS within timeout period.")
-#             # 타임아웃 발생 시 core-cpu1 프로그램 종료
-#             send_cFS_exit_pkt()
-
-#         except Exception as e:
-#             print(f"An error occurred: {e}")
-#         finally:
-#             if 'conn' in locals():
-#                 conn.close()
-#                 print("Connection closed.")
+    for port in ports:
+        try:
+            # UDP 소켓 생성
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as clientsocket:
+                # 메시지 크기 전송
+                clientsocket.sendto(packed_size, (host, port))
+                # 실제 메시지 전송
+                clientsocket.sendto(message, (host, port))
+        except Exception as e:
+            print(f"Error sending to {host}:{port} - {e}")
 
 
 def udp_communication():
@@ -171,13 +108,11 @@ def udp_communication():
         # 랜덤 횟수만큼 반복한 경우 루프 탈출
         if attempt_count >= random_attempts:
             print(f"Reached random attempt count: {random_attempts}. Exiting loop.")
+            send_cFS_exit_to_msg_flow_recv()
             break
 
         # 소켓 닫기
         recv_socket.close()
-
-    # 마지막으로 1234 포트에 특정 메시지 전송
-    send_cFS_exit_to_msg_flow_recv()
 
     print(f"udp_communication attempt {attempt_count} finished. Waiting next attempt...")
 
@@ -195,6 +130,12 @@ if __name__ == "__main__":
     tn = telnetlib.Telnet(HOST, PORT)
 
     # 모니터 초기 프롬프트 수신
+    print('''This code need to :
+          1. open 4444 (do not duplicate) & qemu vm
+          2. start 3000 hex receiever
+          3-1. sudo ./core-cpu1 | nc -u 10.0.2.2 3001 in the Snapshot
+          3-2. start 3001 stdout receiever''')
+    
     output = tn.read_until(b"(qemu) ")
     print("Initial Monitor Output:\n", output.decode())
 
