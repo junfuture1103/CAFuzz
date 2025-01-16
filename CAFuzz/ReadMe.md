@@ -1,3 +1,10 @@
+# Log Flow Collecting For State inference
+Quick start
+```
+CAFuzz/StateAware/MsgFlowLogging/async_send_recv/snapshot]$ ./testing.sh
+```
+으로 바로 테스트 실행가능
+
 # Overview
 
 본 자료는 cFS GroundStation의 SendPacket을 분리해낸 자료입니다.
